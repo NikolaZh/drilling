@@ -1,5 +1,6 @@
 'use strict';
 
+
 const addElement = (type, id, parentEl) => { //add an element on page
     let new_el = document.createElement(type);
     new_el.setAttribute("id", id);
@@ -15,84 +16,10 @@ const addTextToElement = (id, text) => {
     document.querySelector(`#${id}`).textContent = text;
 };
 
-const displayForm = (obj) => { // display form on page to create new position in base 
-    document.querySelector("#input_form").innerHTML = "";
 
-    for (let key in obj[0]) {
-        addElement("li", `${[key]}_li`, "input_form");
-        addElement("input", [key], `${[key]}_li`);
-        document.querySelector(`#${[key]}`).setAttribute("placeholder", `${obj[0][key] }`);
-    }
-    addElement("li", "save_li", "input_form");
-    addElement("button", "save_button", "save_li");
-    addTextToElement("save_button", "Save");
-    document.querySelector("#save_button").addEventListener("click", () => {
-        saveButton(obj);
-    })
-}
 
-const addKeyCreateForm = (text, obj) => { //add adding buttons in "#buttons_add" section with options from objects
 
-    addElement("li", `${text}_li`, "buttons_add");
-    addElement("button", `${text}_button`, `${text}_li`);
-    addTextToElement(`${text}_button`, `Add ${text}`);
-    document.querySelector(`#${text}_button`).addEventListener("click", () => {
-        displayForm(obj)
-    });
 
-}
-
-const saveButton = (obj) => {
-    let counter = 0; //find place in obj to save new position, counter return new empty position
-    for (let key in obj) {
-        counter++;
-    }
-    obj[counter] = {};
-
-    for (let key in obj[0]) {
-        obj[counter][key] = document.querySelector(`#${key}`).value;
-    }
-
-    saveLocalObj();
-
-    addTabs(); // redraw all tabs
-    document.querySelector("#input_form").innerHTML = "Сохранено!";
-}
-
-const addTabFromObj = (parentEl, objectName) => { // add tab from object in parent element, set counter for table "td" elements
-    let counterEl = 0;
-    let obj = JSON.parse(localStorage.getItem(objectName));
-    document.querySelector(`#${parentEl}`).innerHTML = "";
-
-    addElement("table", `table_${parentEl}`, `${parentEl}`);
-    addClassToElement(`table_${parentEl}`, "table");
-
-    for (let key in obj[0]) {
-        addElement("th", `table_${parentEl}_${key}_th`, `table_${parentEl}`);
-        addTextToElement(`table_${parentEl}_${key}_th`, `${obj[0][key] }`);
-    }
-
-    for (let key in obj) {
-        let temp = key;
-        if (temp == 0) continue;
-        else {
-            addElement("tr", `tr_${parentEl}_${temp}`, `table_${parentEl}`);
-
-            for (let key in obj[temp]) {
-                addElement("td", `${parentEl}_${counterEl}_td`, `tr_${parentEl}_${temp}`);
-                addTextToElement(`${parentEl}_${counterEl}_td`, obj[temp][key]);
-                counterEl++;
-            }
-        }
-    }
-}
-
-const addTabs = () => {
-    addTabFromObj("drillers_tab", "drillers");
-    addTabFromObj("equipment_tab", "equipment");
-    addTabFromObj("project_tab", "project");
-    addTabFromObj("operators_tab", "operators");
-}
 
 
 const chekLocalObj = (nameObj) => {
@@ -110,9 +37,122 @@ const saveLocalObj = () => {
 
 
 
+/////////////////////////////////////////////////////////////////////////////
+const displayForm = (arr, text, objectName) => { // display form on page to create new position in base 
+    document.querySelector("#input_form").innerHTML = "";
 
-let drillers = (chekLocalObj("drillers")) ? chekLocalObj("drillers") : { 0: { name: "Название БУ", number: "Серийный номер буровой установки", } };
-localStorage.setItem('drillers', JSON.stringify(drillers));
+    for (let i in arr) {
+        addElement("li", `li_${i}`, "input_form");
+        addElement("input", `in_${i}`, `li_${i}`);
+        document.querySelector(`#in_${i}`).setAttribute("placeholder", `${arr[i]}`);
+    }
+
+    addElement("li", "save_li", "input_form");
+    addElement("button", "save_button", "save_li");
+    addTextToElement("save_button", "Save");
+
+    document.querySelector("#save_button").addEventListener("click", () => {
+        objectName.push(saveButton(arr, text));
+        renderAll();
+    })
+};
+
+
+const saveButton = (arr, text) => {
+    let obj = typeAddPos(text); //return type of new Class which saveButton create in storage
+    let i = 0;
+
+
+    for (let key in obj["fields"]) {
+        obj["fields"][key] = document.querySelector(`#in_${i}`).value;
+        i++;
+    }
+
+    document.querySelector("#input_form").innerHTML = "Сохранено!";
+    return obj;
+
+};
+
+const typeAddPos = (text) => {
+    switch (text) {
+        case 'driller':
+            return (new Driller({ name: "", code: "" }));
+
+        case 'value2':
+
+        default:
+            console.log("error!")
+    }
+};
+
+
+
+const renderTableHeader = (parentEl, tableName, arr) => {
+
+    document.querySelector(`#${parentEl}`).innerHTML = "";
+
+    addElement("table", `${tableName}`, `${parentEl}`);
+    addClassToElement(`${tableName}`, "table");
+
+    for (let i in arr) {
+        addElement("th", `th${i}`, `${tableName}`);
+        addTextToElement(`th${i}`, `${arr[i]}`);
+    }
+
+};
+
+const renderTable = (tableName, object) => {
+    let counterTr = 0;
+    let counterTd = 0;
+
+
+    for (let key in object) {
+
+        addElement("tr", `tr_${counterTr}_${tableName}`, `${tableName}`);
+
+        for (let key1 in object[key]["fields"]) {
+            addElement("td", `td_${counterTd}_${tableName}`, `tr_${counterTr}_${tableName}`);
+            addTextToElement(`td_${counterTd}_${tableName}`, object[key]["fields"][key1]);
+
+            counterTd++;
+        }
+        counterTr++;
+    }
+};
+
+
+
+const renderAll = () => {
+    renderTableHeader("drillers_tab", "Drillers", tagsDrillers);
+    renderTable("Drillers", drillers);
+};
+
+const addKeyCreateForm = (tagsArr, text, obj) => { //add adding buttons in "#buttons_add" section with options from objects
+
+    addElement("li", `${text}_li`, "buttons_add");
+    addElement("button", `${text}_button`, `${text}_li`);
+    addTextToElement(`${text}_button`, `Add ${text}`);
+    document.querySelector(`#${text}_button`).addEventListener("click", () => {
+
+        displayForm(tagsArr, text, obj);
+    });
+
+}
+
+
+
+
+
+let drillers = [
+    new Driller({ name: "Буровая #1", code: "XXX-001" }),
+    new Driller({ name: "Буровая #2", code: "XO XD 13" })
+];
+
+let tagsDrillers = ["Название буровой", "Серийный номер"];
+
+
+//let drillers = (chekLocalObj("drillers")) ? chekLocalObj("drillers") : { 0: { name: "Название БУ", number: "Серийный номер буровой установки", } };
+//localStorage.setItem('drillers', JSON.stringify(drillers));
 
 let equipment = (chekLocalObj("equipment")) ? chekLocalObj("equipment") : { 0: { name: "Тип оборудования", number: "Серийный номер" } };
 localStorage.setItem('equipment', JSON.stringify(equipment));
@@ -124,10 +164,25 @@ let operators = (chekLocalObj("operators")) ? chekLocalObj("operators") : { 0: {
 localStorage.setItem('operators', JSON.stringify(operators));
 
 
-addTabs();
 
 
-addKeyCreateForm("Driller", drillers);
-addKeyCreateForm("Equip", equipment);
-addKeyCreateForm("Project", project);
-addKeyCreateForm("Operator", operators);
+renderAll();
+
+addKeyCreateForm(tagsDrillers, "driller", drillers)
+
+//displayForm(tagsDrillers, "driller", drillers);
+
+
+
+
+
+
+//addTabFromObj("drillers_tab", "drillers");
+
+//addKeyCreateForm("Driller", drillers);
+//addKeyCreateForm("Equip", equipment);
+//addKeyCreateForm("Project", project);
+//addKeyCreateForm("Operator", operators);
+
+
+//addDelKey("Driller", "drillers");
