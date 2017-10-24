@@ -84,6 +84,68 @@ class Equipment extends Model {
 
 
 
+class Project extends Model {
+
+    static unwrap(fields) {
+        return new Project({ name: fields.name, address: fields.address, fio: fields.fio, phone: fields.phone }, fields.id);
+    }
+
+    constructor(fields = {}, id = null) {
+        super(fields, id);
+        if (!id && (fields.code !== undefined)) {
+            this.id = Model.toIdFormat(fields.code);
+        };
+
+    }
+
+    get name() {
+        return this.fields.name;
+    }
+
+    get address() {
+        return this.fields.address;
+    }
+
+    get fio() {
+        return this.fields.fio;
+    }
+
+    get phone() {
+        return this.fields.phone;
+    }
+
+}
+
+
+
+class Operator extends Model {
+
+    static unwrap(fields) {
+        return new Operator({ name: fields.name, phone: fields.phone }, fields.id);
+    }
+
+    constructor(fields = {}, id = null) {
+        super(fields, id);
+        if (!id && (fields.code !== undefined)) {
+            this.id = Model.toIdFormat(fields.code);
+        };
+
+    }
+
+    get name() {
+        return this.fields.name;
+    }
+
+    get phone() {
+        return this.fields.phone;
+    }
+
+}
+
+
+
+
+
 
 
 
@@ -98,7 +160,6 @@ class LocalStorage {
         const objectData = localStorage.getItem(typeObj);
 
         if (String(objectData) == "null") { // check our object in storage browser. Can we do it better?
-            console.log("vozvrat false")
             return false
         };
 
@@ -118,18 +179,26 @@ class LocalStorage {
         };
 
         switch (nameArrOfObj) {
-            case "Drillers":
+            case NAME_DRILLERS_STORAGE:
                 object = new Driller;
                 break;
 
-            case "Equipments":
+            case NAME_EQUIPMENTS_STORAGE:
                 object = new Equipment;
+                break;
+
+            case NAME_PROJECTS_STORAGE:
+                object = new Project;
+                break;
+
+            case NAME_OPERATORS_STORAGE:
+                object = new Operator;
                 break;
 
 
             default:
                 console.log("Error, no arr with this type of obj");
-        }
+        };
 
         let unwrapObj = JSON.parse(objectData).map((fields) => {
             return object.constructor.unwrap(fields);
@@ -168,7 +237,7 @@ class LocalStorage {
         } else {
             object._id = idname + ((Math.random()) + "").slice(-6);;
             return newid;
-        }
+        };
 
 
     };
@@ -194,7 +263,7 @@ class SaveLoadStorage extends LocalStorage {
         const jsonData = JSON.stringify(data);
 
         localStorage.setItem(object.constructor["name"] + "s", jsonData);
-    }
+    };
 
     saveEditedObj(object) { //overwrite obj in storage with same id 
         let data = LocalStorage.objFromLS(object);
@@ -214,56 +283,43 @@ class SaveLoadStorage extends LocalStorage {
         const jsonData = JSON.stringify(data);
 
         localStorage.setItem(object.constructor["name"] + "s", jsonData);
+    };
 
 
-    }
 
     loadById(id) {
         let id = LocalStorage.getNewID(object);
         console.log("poluchili id: ", id);
-    }
+    };
+
+
 
     loadByType(nameArrOfObj) {
         let loadObj = LocalStorage.objLoadFromLS(nameArrOfObj);
         return loadObj;
-    }
+    };
+
+
 
     newEmptyObj(type) { //return new empty obj by requested type
         switch (type) {
-            case 'driller':
+            case NAME_DRILLERS_STORAGE:
                 return (new Driller({ name: "", code: "" }));
 
-            case 'equipment':
+            case NAME_EQUIPMENTS_STORAGE:
                 return (new Equipment({ type: "", code: "" }));
+
+            case NAME_PROJECTS_STORAGE:
+                return (new Project({ name: "", address: "", fio: "", phone: "" }));
+
+            case NAME_OPERATORS_STORAGE:
+                return (new Operator({ name: "", phone: "" }));
 
 
             default:
                 console.log("error!")
-        }
+        };
     };
 
 
-}
-
-
-/*
-
-let drillers = [
-    new Driller({ name: "Буровая #1", code: "XXX-001" }),
-    new Driller({ name: "Буровая #2", code: "XO XD 13" })
-];
-
-
-
-const drillersData = JSON.stringify(drillers);
-console.log("JSON representation:\n", drillersData);
-
-localStorage.setItem("Drillers", drillersData);
-
-const back_drillersData = localStorage.getItem("Drillers");
-console.log("vernuli s local storage: ", back_drillersData)
-
-drillers = JSON.parse(back_drillersData).map((fields) => {
-    return Driller.unwrap(fields);
-});
-console.log("Unwrapped objects:\n", drillers);*/
+};

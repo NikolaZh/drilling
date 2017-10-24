@@ -35,14 +35,15 @@ const displayForm = (arr, type) => { // display form on page to create new posit
     })
 };
 
-const addKeyCreateForm = (tagsArr, text) => { //add adding buttons in "#buttons_add" section with 
+const addKeyCreateForm = (tagsArr, type) => { //add adding buttons in "#buttons_add" section with 
+    let text = type.slice(0,-1); 
 
     addElement("li", `${text}_li`, "buttons_add");
     addElement("button", `${text}_button`, `${text}_li`);
     addTextToElement(`${text}_button`, `Add ${text}`);
     document.querySelector(`#${text}_button`).addEventListener("click", () => {
 
-        displayForm(tagsArr, text);
+        displayForm(tagsArr, type);
     });
 
 };
@@ -96,19 +97,28 @@ const renderTable = (tableName, object) => {
 
 
 const renderAll = () => {
-    renderTableHeader("drillers_tab", "Drillers", tagsDrillers);
+    renderTableHeader("drillers_tab", "Drillers", TAGS_DRILLERS);
     renderTable("Drillers", drillers);
 
 
-    renderTableHeader("equipment_tab", "Equipments", tagsEquipments);
+    renderTableHeader("equipment_tab", "Equipments", TAGS_EQUIPMENTS);
     renderTable("Equipments", equipments);
+
+
+    renderTableHeader("project_tab", "Projects", TAGS_PROJECTS);
+    renderTable("Projects", projects);
+
+    renderTableHeader("operators_tab", "Operators", TAGS_OPERATORS);
+    renderTable("Operators", operators);
 
 };
 
 
 const reloadStorage = () => {
-    drillers = storage.loadByType("Drillers");
-    equipments = storage.loadByType("Equipments");
+    drillers = storage.loadByType(NAME_DRILLERS_STORAGE);
+    equipments = storage.loadByType(NAME_EQUIPMENTS_STORAGE);
+    projects = storage.loadByType(NAME_PROJECTS_STORAGE);
+    operators = storage.loadByType(NAME_OPERATORS_STORAGE);
 }
 
 
@@ -116,15 +126,15 @@ const reloadStorage = () => {
 
 
 let storage = new SaveLoadStorage;
-let drillers = storage.loadByType("Drillers");
-let equipments = storage.loadByType("Equipments");
 
+let drillers = storage.loadByType(NAME_DRILLERS_STORAGE);
+let equipments = storage.loadByType(NAME_EQUIPMENTS_STORAGE);
+let projects = storage.loadByType(NAME_PROJECTS_STORAGE);
+let operators = storage.loadByType(NAME_OPERATORS_STORAGE);
 
-let tagsDrillers = ["Название буровой", "Серийный номер"];
-let tagsEquipments = ["Тип оборудования", "Серийный номер"];
-let tagsProjects = ["Название объекта", "Адрес", "ФИО ответственного лица", "Контактный номер"];
-let tagsOperators = ["ФИО оператора", "Контактный номер"];
 
 renderAll();
-addKeyCreateForm(tagsDrillers, "driller");
-addKeyCreateForm(tagsEquipments, "equipment")
+addKeyCreateForm(TAGS_DRILLERS, NAME_DRILLERS_STORAGE);
+addKeyCreateForm(TAGS_EQUIPMENTS, NAME_EQUIPMENTS_STORAGE);
+addKeyCreateForm(TAGS_PROJECTS, NAME_PROJECTS_STORAGE);
+addKeyCreateForm(TAGS_OPERATORS, NAME_OPERATORS_STORAGE);
