@@ -3,7 +3,11 @@ const TAGS_EQUIPMENTS = ["Тип оборудования", "Серийный н
 const TAGS_PROJECTS = ["Название объекта", "Адрес", "ФИО ответственного лица", "Контактный номер"];
 const TAGS_OPERATORS = ["ФИО оператора", "Контактный номер"];
 
-const NAME_DRILLERS_STORAGE = "Drillers";
-const NAME_EQUIPMENTS_STORAGE = "Equipments";
-const NAME_PROJECTS_STORAGE = "Projects";
-const NAME_OPERATORS_STORAGE = "Operators";
+
+
+
+
+const NAME_DRILLERS_STORAGE = "Driller";
+const NAME_EQUIPMENTS_STORAGE = "Equipment";
+const NAME_PROJECTS_STORAGE = "Project";
+const NAME_OPERATORS_STORAGE = "Operator";

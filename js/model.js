@@ -35,6 +35,10 @@ class Model {
 
 class Driller extends Model {
 
+    static get fields() {
+        return { "name": "Название буровой", "code": "Серийный номер" };
+    }
+
     static unwrap(fields) {
         return new Driller({ name: fields.name, code: fields.code }, fields.id);
     }
@@ -155,7 +159,7 @@ class Operator extends Model {
 class LocalStorage {
 
     static objFromLS(object) { // return unwrap obj (finded by class input obj) from storage, if obj does not exist - return false.
-        let typeObj = object.constructor["name"] + "s";
+        let typeObj = object.constructor.name;
 
         const objectData = localStorage.getItem(typeObj);
 
@@ -262,7 +266,7 @@ class SaveLoadStorage extends LocalStorage {
 
         const jsonData = JSON.stringify(data);
 
-        localStorage.setItem(object.constructor["name"] + "s", jsonData);
+        localStorage.setItem(object.constructor.name, jsonData);
     };
 
     saveEditedObj(object) { //overwrite obj in storage with same id 
@@ -282,13 +286,13 @@ class SaveLoadStorage extends LocalStorage {
 
         const jsonData = JSON.stringify(data);
 
-        localStorage.setItem(object.constructor["name"] + "s", jsonData);
+        localStorage.setItem(object.constructor.name, jsonData);
     };
 
 
 
     loadById(id) {
-        let id = LocalStorage.getNewID(object);
+        id = LocalStorage.getNewID(object);
         console.log("poluchili id: ", id);
     };
 
@@ -323,3 +327,128 @@ class SaveLoadStorage extends LocalStorage {
 
 
 };
+
+
+
+
+class BaseStorage2 {
+
+
+
+
+    all(cls) {
+        let storage_name = cls.prototype.constructor.name;
+
+        const wrapObj = localStorage.getItem(storage_name);
+
+        if (wrapObj === null) { // check our object in storage browser
+            console.log("no obj in storage with this cls");
+            return false
+        };
+
+        let unwrapObj = JSON.parse(wrapObj).map((fields) => {
+            return cls.prototype.constructor.unwrap(fields);
+        });
+
+        return unwrapObj;
+    }
+
+    save(object) {
+        let storage_name = object.constructor.name;
+
+        let data = localStorage.getItem(storage_name);
+        let newAppropId = this._increase_id(object);
+
+        if (data) {
+            data = JSON.parse(data).map((fields) => {
+                return object.constructor.unwrap(fields);
+            });
+        };
+
+        if (data && newAppropId) {
+            object._id = newAppropId;
+            data.push(object);
+
+        } else if (data) {
+
+            for (let key in data) {
+                if (data[key]._id == object._id) {
+
+                    for (let key1 in data[key]._f) {
+                        data[key]._f[key1] = object._f[key1];
+                    }
+                }
+            }
+
+        } else {
+            object._id = newAppropId;
+            data = [object];
+        }
+
+        data = JSON.stringify(data);
+        localStorage.setItem(storage_name, data);
+
+        return object._id;
+    }
+
+    load(cls, id) {
+        throw new Error("Not implemented");
+    }
+
+
+
+    _increase_id(object) {
+        if (object._id != null) return false;
+
+        let lastId = localStorage.getItem("ids");
+        let newAppropId = 0;
+
+        if (lastId === null) { // where to transfer it for auto-init at startup?
+            lastId = { "Driller": -1, "Equipment": -1, "Project": -1, "Operator": -1 };
+        } else { lastId = JSON.parse(lastId) };
+
+
+        for (let key in lastId) {
+
+            if (object.constructor.name == key) {
+                lastId[key]++;
+                newAppropId = lastId[key];
+                break;
+            }
+
+        }
+
+        lastId = JSON.stringify(lastId);
+
+        localStorage.setItem("ids", lastId);
+
+        return newAppropId;
+    }
+
+
+    _newEmptyObj(type) { //return new empty obj by requested type
+        switch (type) {
+            case NAME_DRILLERS_STORAGE:
+                return (new Driller({ name: "", code: "" }));
+
+            case NAME_EQUIPMENTS_STORAGE:
+                return (new Equipment({ type: "", code: "" }));
+
+            case NAME_PROJECTS_STORAGE:
+                return (new Project({ name: "", address: "", fio: "", phone: "" }));
+
+            case NAME_OPERATORS_STORAGE:
+                return (new Operator({ name: "", phone: "" }));
+
+
+            default:
+                console.log("error!")
+        };
+    };
+
+}
+
+class LocalStorage2 extends BaseStorage2 {
+
+
+}
