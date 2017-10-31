@@ -1,6 +1,5 @@
 'use strict';
 
-
 const addElement = (type, id, parentEl) => { //add an element on page
     let new_el = document.createElement(type);
     new_el.setAttribute("id", id);
@@ -24,6 +23,11 @@ const displayForm = (object) => { // display form on page to create new position
         addElement("input", `in_${key}`, `li_${key}`);
         document.querySelector(`#in_${key}`).setAttribute("placeholder", `${object.fields[key]}`);
     }
+
+    //delete this after
+    addElement("li", `li_id`, "input_form");
+    addElement("input", `in_id`, `li_id`);
+    document.querySelector(`#in_id`).setAttribute("placeholder", `id(optional to check save edited)`);
 
     addElement("li", "save_li", "input_form");
     addElement("button", "save_button", "save_li");
@@ -55,6 +59,12 @@ const saveButton = (object) => {
         empty_obj["fields"][key] = document.querySelector(`#in_${key}`).value;
        
     }
+
+        //delete this after
+    if (document.querySelector(`#in_id`).value != ""){
+        empty_obj._id = document.querySelector(`#in_id`).value;
+    }
+
 
     document.querySelector("#input_form").innerHTML = "Сохранено!";
     storage.save(empty_obj);
@@ -122,7 +132,7 @@ const reloadStorage = () => {
 
 
 
-let storage = new LocalStorage2;
+let storage = new LocalStorage;
 
 let drillers = storage.all(Driller);
 let equipments = storage.all(Equipment);
