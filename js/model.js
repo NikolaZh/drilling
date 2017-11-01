@@ -145,6 +145,17 @@ class Operator extends Model {
 
 class BaseStorage {
 
+    constructor() {
+        let lastId = localStorage.getItem("ids");        
+
+        if (lastId === null) {                                     //check lastID exist, if not - set empty
+            lastId = { "Driller": -1, "Equipment": -1, "Project": -1, "Operator": -1 };
+           
+            localStorage.setItem("ids", JSON.stringify(lastId));
+        } 
+      
+    }
+
     all(cls) {
         let storage_name = cls.prototype.constructor.name;
 
@@ -165,7 +176,7 @@ class BaseStorage {
         let storage_name = object.constructor.name;
 
         let data = localStorage.getItem(storage_name);
-        let newAppropId = this._increase_id(object);
+        let newAppropId = this.increase_id(object);
 
         if (data) {
             data = JSON.parse(data).map((fields) => {
@@ -173,11 +184,11 @@ class BaseStorage {
             });
         };
 
-        if (data && newAppropId) {
+        if (data && newAppropId) { //storage and newID exist => just add new object
             object._id = newAppropId;
             data.push(object);
 
-        } else if (data) {
+        } else if (data) { //storage exist, but newID false (object is old) => looking for object with same id in storage and replace
 
             for (let key in data) {
                 if (data[key]._id == object._id) {
@@ -188,20 +199,18 @@ class BaseStorage {
                 }
             }
 
-        } else {
+        } else { // no storage, just add object
             object._id = newAppropId;
             data = [object];
         }
 
-        data = JSON.stringify(data);
-        localStorage.setItem(storage_name, data);
+        localStorage.setItem(storage_name, JSON.stringify(data));
 
         return object._id;
     }
 
     load(cls, id) {
         let data = this.all(cls);
-        let callObj;
 
         if (data) {
             for (let key in data) {
@@ -213,16 +222,11 @@ class BaseStorage {
 
 
 
-    _increase_id(object) {
-        if (object._id != null) return false;
+    increase_id(object) {
+        if (object._id != null) return false; //id exist = object old
 
-        let lastId = localStorage.getItem("ids");
+        let lastId = JSON.parse(localStorage.getItem("ids"));
         let newAppropId = 0;
-
-        if (lastId === null) { // where to transfer it for auto-init at startup?
-            lastId = { "Driller": -1, "Equipment": -1, "Project": -1, "Operator": -1 };
-        } else { lastId = JSON.parse(lastId) };
-
 
         for (let key in lastId) {
 
@@ -234,9 +238,7 @@ class BaseStorage {
 
         }
 
-        lastId = JSON.stringify(lastId);
-
-        localStorage.setItem("ids", lastId);
+        localStorage.setItem("ids", JSON.stringify(lastId));
 
         return newAppropId;
     }
