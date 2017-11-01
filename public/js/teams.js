@@ -1,6 +1,5 @@
 'use strict';
 
-
 const addElement = (type, id, parentEl) => { //add an element on page
     let new_el = document.createElement(type);
     new_el.setAttribute("id", id);
@@ -16,63 +15,72 @@ const addTextToElement = (id, text) => {
     document.querySelector(`#${id}`).textContent = text;
 };
 
-const displayForm = (arr, type) => { // display form on page to create new position in base 
+const displayForm = (object) => { // display form on page to create new position in base 
     document.querySelector("#input_form").innerHTML = "";
 
-    for (let i in arr) {
-        addElement("li", `li_${i}`, "input_form");
-        addElement("input", `in_${i}`, `li_${i}`);
-        document.querySelector(`#in_${i}`).setAttribute("placeholder", `${arr[i]}`);
+    for (let key in object.fields) {
+        addElement("li", `li_${key}`, "input_form");
+        addElement("input", `in_${key}`, `li_${key}`);
+        document.querySelector(`#in_${key}`).setAttribute("placeholder", `${object.fields[key]}`);
     }
+
+    //delete this after
+    addElement("li", `li_id`, "input_form");
+    addElement("input", `in_id`, `li_id`);
+    document.querySelector(`#in_id`).setAttribute("placeholder", `id(optional to check save edited)`);
 
     addElement("li", "save_li", "input_form");
     addElement("button", "save_button", "save_li");
     addTextToElement("save_button", "Save");
 
     document.querySelector("#save_button").addEventListener("click", () => {
-        saveButton(type);
+        saveButton(object);
         renderAll();
     })
 };
 
-const addKeyCreateForm = (tagsArr, type) => { //add adding buttons in "#buttons_add" section with 
-    let text = type.slice(0,-1); 
+const addKeyCreateForm = (object) => { //add adding buttons in "#buttons_add" section with 
+    let text = object.name; 
 
     addElement("li", `${text}_li`, "buttons_add");
     addElement("button", `${text}_button`, `${text}_li`);
     addTextToElement(`${text}_button`, `Add ${text}`);
     document.querySelector(`#${text}_button`).addEventListener("click", () => {
 
-        displayForm(tagsArr, type);
+        displayForm(object);
     });
 
 };
 
-const saveButton = (type) => {
-    let obj = storage.newEmptyObj(type); //return type of new Class which saveButton create in storage
-    let i = 0;
+const saveButton = (object) => {
+    let empty_obj = new object;
 
-
-    for (let key in obj["fields"]) {
-        obj["fields"][key] = document.querySelector(`#in_${i}`).value;
-        i++;
+    for (let key in object["fields"]) {
+        empty_obj["fields"][key] = document.querySelector(`#in_${key}`).value;
+       
     }
 
+        //delete this after
+    if (document.querySelector(`#in_id`).value != ""){
+        empty_obj._id = document.querySelector(`#in_id`).value;
+    }
+
+
     document.querySelector("#input_form").innerHTML = "Сохранено!";
-    storage.save(obj);
+    storage.save(empty_obj);
     reloadStorage();
 };
 
-const renderTableHeader = (parentEl, tableName, arr) => {
+const renderTableHeader = (parentEl, tableName, object) => {
 
     document.querySelector(`#${parentEl}`).innerHTML = "";
 
     addElement("table", `${tableName}`, `${parentEl}`);
     addClassToElement(`${tableName}`, "table");
 
-    for (let i in arr) {
-        addElement("th", `th${i}${tableName}`, `${tableName}`);
-        addTextToElement(`th${i}${tableName}`, `${arr[i]}`);
+    for (let key in object.fields) {
+        addElement("th", `th${key}${tableName}`, `${tableName}`);
+        addTextToElement(`th${key}${tableName}`, `${object.fields[key]}`);
     }
 
 };
@@ -97,44 +105,43 @@ const renderTable = (tableName, object) => {
 
 
 const renderAll = () => {
-    renderTableHeader("drillers_tab", "Drillers", TAGS_DRILLERS);
+    renderTableHeader("drillers_tab", "Drillers", Driller);
     renderTable("Drillers", drillers);
 
 
-    renderTableHeader("equipment_tab", "Equipments", TAGS_EQUIPMENTS);
+    renderTableHeader("equipment_tab", "Equipments", Equipment);
     renderTable("Equipments", equipments);
 
 
-    renderTableHeader("project_tab", "Projects", TAGS_PROJECTS);
+    renderTableHeader("project_tab", "Projects", Project);
     renderTable("Projects", projects);
 
-    renderTableHeader("operators_tab", "Operators", TAGS_OPERATORS);
+    renderTableHeader("operators_tab", "Operators", Operator);
     renderTable("Operators", operators);
 
 };
 
 
 const reloadStorage = () => {
-    drillers = storage.loadByType(NAME_DRILLERS_STORAGE);
-    equipments = storage.loadByType(NAME_EQUIPMENTS_STORAGE);
-    projects = storage.loadByType(NAME_PROJECTS_STORAGE);
-    operators = storage.loadByType(NAME_OPERATORS_STORAGE);
-}
+    drillers = storage.all(Driller);
+    equipments = storage.all(Equipment);
+    projects = storage.all(Project);
+    operators = storage.all(Operator);
+
+};
 
 
 
+let storage = new LocalStorage;
 
-
-let storage = new SaveLoadStorage;
-
-let drillers = storage.loadByType(NAME_DRILLERS_STORAGE);
-let equipments = storage.loadByType(NAME_EQUIPMENTS_STORAGE);
-let projects = storage.loadByType(NAME_PROJECTS_STORAGE);
-let operators = storage.loadByType(NAME_OPERATORS_STORAGE);
+let drillers = storage.all(Driller);
+let equipments = storage.all(Equipment);
+let projects = storage.all(Project);
+let operators = storage.all(Operator);
 
 
 renderAll();
-addKeyCreateForm(TAGS_DRILLERS, NAME_DRILLERS_STORAGE);
-addKeyCreateForm(TAGS_EQUIPMENTS, NAME_EQUIPMENTS_STORAGE);
-addKeyCreateForm(TAGS_PROJECTS, NAME_PROJECTS_STORAGE);
-addKeyCreateForm(TAGS_OPERATORS, NAME_OPERATORS_STORAGE);
+addKeyCreateForm(Driller);
+addKeyCreateForm(Equipment);
+addKeyCreateForm(Project);
+addKeyCreateForm(Operator);

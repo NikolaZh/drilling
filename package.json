@@ -1,24 +1,28 @@
 {
-  "name": "drilling",
-  "version": "1.0.0",
-  "description": "test",
-  "start_url": "./index.html",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/NikolaZh/drilling.git"
-  },
-  "author": "Jim",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/NikolaZh/drilling/issues"
-  },
-  "homepage": "https://github.com/NikolaZh/drilling#readme",
-  "dependencies": {
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0"
-  }
+    "name": "drilling",
+    "version": "1.0.0",
+    "description": "test",
+    "start_url": "./index.html",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NikolaZh/drilling.git"
+    },
+    "author": "Jim",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/NikolaZh/drilling/issues"
+    },
+    "homepage": "https://github.com/NikolaZh/drilling#readme",
+    "dependencies": {
+        "babel-core": "^6.26.0",
+        "babel-polyfill": "^6.26.0",
+        "express": "^4.16.2",
+        "pug": "^2.0.0-rc.4",
+        "react": "^16.0.0",
+        "react-dom": "^16.0.0"
+    }
 }
