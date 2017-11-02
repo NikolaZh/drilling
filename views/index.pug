@@ -1,9 +1,9 @@
 html
     head
         link(href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css", rel="stylesheet")
-        link(href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap-reboot.min.css", rel="stylesheet") 
+        link(href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap-reboot.min.css", rel="stylesheet")
         link(href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap-grid.min.css", rel="stylesheet")
-        link(href="static/css/drill.css", rel="stylesheet") 
+        link(href="static/css/drill.css", rel="stylesheet")
     title= title
     body
         div(class="container" id="main")
@@ -13,35 +13,38 @@ html
                     div(class="col-2")
                         h3 Drillers
                     div(class="col-10" id="drillers_tab")
-            
+
                 div(class="row")
                     div(class="col-2")
                         h3 Equipments
                     div(class="col-10" id="equipment_tab")
-            
+
                 div(class="row")
                     div(class="col-2")
                         h3 Projects
                     div(class="col-10" id="project_tab")
-            
+
                 div(class="row")
                     div(class="col-2")
                         h3 Operators
                     div(class="col-10" id="operators_tab")
-            
-            
+
+
 
 
             div(class="row")
                 ul(class="nomark_list" id="input_form")
-                    
+
             div(class="row")
                 ul(class="nomark_list" id="buttons_add")
 
-            
 
 
 
 
+
+    script(src='/static/js/lib/model/model.js')
+    script(src='/static/js/lib/model/storage.js')
+    script(src='/static/js/lib/model/local-storage.js')
     script(src='/static/js/model.js')
     script(src='/static/js/teams.js')
