@@ -1,0 +1,55 @@
+{
+    "extends": "airbnb",
+    "rules": {
+        "func-names": ["error", "never"],
+        'no-unused-vars': ['off', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
+        'no-underscore-dangle': ['off', {
+            allow: [],
+            allowAfterThis: true,
+            allowAfterSuper: false,
+            enforceInMethodNames: false,
+        }],
+        'no-restricted-syntax': [
+            'off',
+            {
+                selector: 'ForInStatement',
+                message: 'for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array.',
+            },
+            {
+                selector: 'ForOfStatement',
+                message: 'iterators/generators require regenerator-runtime, which is too heavyweight for this guide to allow them. Separately, loops should be avoided in favor of array iterations.',
+            },
+            {
+                selector: 'LabeledStatement',
+                message: 'Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand.',
+            },
+            {
+                selector: 'WithStatement',
+                message: '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.',
+            },
+        ],
+        'no-console': 'off',
+        'object-property-newline': ['off', {
+            allowMultiplePropertiesPerLine: true,
+        }],
+'guard-for-in': 'off',
+'no-param-reassign': ['off', {
+      props: true,
+      ignorePropertyModificationsFor: [
+        'acc', // for reduce accumulators
+        'e', // for e.returnvalue
+        'ctx', // for Koa routing
+        'req', // for Express requests
+        'request', // for Express requests
+        'res', // for Express responses
+        'response', // for Express responses
+        '$scope', // for Angular 1 scopes
+      ]
+    }],
+'class-methods-use-this': ['off', {
+      exceptMethods: [],
+    }],
+'no-plusplus': 'off'
+    },
+
+}
