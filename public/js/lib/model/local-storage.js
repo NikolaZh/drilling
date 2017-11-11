@@ -2,13 +2,15 @@ class LocalStorage extends BaseStorage {
     all(cls) {
         super.all(cls);
         const storageName = cls.prototype.constructor.name;
-        if (this.loadBuffer(storageName)) return this.loadBuffer(storageName);
-        const wrapObj = localStorage.getItem(storageName);
-        if (wrapObj === null) { // check our object in storage browser
-            return false;
+        let unwrapObj = this.loadBuffer(storageName);
+        if (unwrapObj == false) { // check buffer, if is not exist - checl local storage
+            const wrapObj = localStorage.getItem(storageName);
+            if (wrapObj === null) { // check our object in storage browser
+                return unwrapObj;
+            }
+            unwrapObj = JSON.parse(wrapObj).map(fields => cls.prototype.constructor.unwrap(fields));
+            this.saveBuffer(unwrapObj, storageName);
         }
-        const unwrapObj = JSON.parse(wrapObj).map(fields => cls.prototype.constructor.unwrap(fields));
-        this.saveBuffer(unwrapObj, storageName);
         return unwrapObj;
     }
 
@@ -42,12 +44,8 @@ class LocalStorage extends BaseStorage {
 
     load(cls, id) {
         super.load(cls, id);
-        const data = this.all(cls);
-        if (data) {
-            for (const key in data) {
-                if (data[key]._id == id) { return data[key]; }
-            }
-        } else return false;
+        const storageName = cls.prototype.constructor.name;
+        return this.loadBuffer(storageName, id);
     }
 
     increaseId(object) {
@@ -62,26 +60,41 @@ class LocalStorage extends BaseStorage {
         return lastId;
     }
 
-
-    static buffer() {
-        return {};
-    }
+    static buffer() {}
 
     saveBuffer(arr, clsName) {
-        const data = {};
-        if (this.buffer !== 'undefined') {
-            for (const key in this.buffer) {
-                data[key] = this.buffer[key];
-            }
+        let key;
+        if (this.buffer === undefined) { // check buffer exist
+            this.buffer = [];
         }
-        data[clsName] = arr;
-        this.buffer = data;
+        for (let i = 0; i < arr.length; i++) {
+            key = this.hashKey(clsName + arr[i]._id);
+            this.buffer[key] = arr[i];
+        }
     }
 
-    loadBuffer(clsName) {
-        for (const key in this.buffer) {
-            if (key === clsName) return this.buffer[key];
+    loadBuffer(clsName, id) { // if id not specified, function return all objects with same class
+        let data = [];
+        if (this.buffer === undefined) {
+            return false;
+        } else if (id === undefined) {
+            for (const key in this.buffer) {
+                if (this.buffer[key].constructor.name == clsName) {
+                    data.push(this.buffer[key]);
+                }
+            }
+        } else {
+            const key = clsName + id;
+            data = this.buffer[this.hashKey(key)];
         }
-        return false;
+        return data;
+    }
+
+    hashKey(key) {
+        let hash = 0;
+        for (let i = 0; i < key.length; i++) {
+            hash += ((hash << 4) - hash) + key.charCodeAt(i);
+        }
+        return hash;
     }
 }

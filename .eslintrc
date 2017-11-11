@@ -10,6 +10,8 @@
             allowAfterSuper: false,
             enforceInMethodNames: false,
         }],
+'default-case': ['off', { commentPattern: '^no default$' }],
+'no-case-declarations': 'off',
         'no-restricted-syntax': [
             'off',
             {
