@@ -1,5 +1,6 @@
 {
     "extends": "airbnb",
+   
     "rules": {
         "func-names": ["error", "never"],
         'no-unused-vars': ['off', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
@@ -9,6 +10,8 @@
             allowAfterSuper: false,
             enforceInMethodNames: false,
         }],
+'default-case': ['off', { commentPattern: '^no default$' }],
+'no-case-declarations': 'off',
         'no-restricted-syntax': [
             'off',
             {
@@ -49,7 +52,29 @@
 'class-methods-use-this': ['off', {
       exceptMethods: [],
     }],
-'no-plusplus': 'off'
+'no-plusplus': 'off',
+indent: ['error', 4, {
+      SwitchCase: 1,
+      VariableDeclarator: 1,
+      outerIIFEBody: 1,
+      // MemberExpression: null,
+      FunctionDeclaration: {
+        parameters: 1,
+        body: 1
+      },
+      FunctionExpression: {
+        parameters: 1,
+        body: 1
+      },
+      CallExpression: {
+        arguments: 1
+      },
+      ArrayExpression: 1,
+      ObjectExpression: 1,
+      ImportDeclaration: 1,
+      flatTernaryExpressions: false,
+      ignoredNodes: ['JSXElement', 'JSXElement *']
+    }]
     },
 
 }
