@@ -19,7 +19,7 @@ class LocalStorage extends BaseStorage {
             data = JSON.parse(data).map(fields => object.constructor.unwrap(fields));
         }
         if (object._id === null) {
-            object._id = this.increaseId(object);
+            object._id = this._increaseId(object);
             isNewObj = true;
         } // check object old or new (if new add id)
         if (data && isNewObj) { // storage and newID exist => just add new object
@@ -49,7 +49,7 @@ class LocalStorage extends BaseStorage {
         } else return false;
     }
 
-    increaseId(object) {
+    _increaseId(object) {
         const objType = object.constructor.name;
         if (localStorage.getItem(`${objType}_ids`) === null) {
             localStorage.setItem(`${objType}_ids`, 1);

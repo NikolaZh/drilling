@@ -52,11 +52,11 @@ const saveButton = (object) => {
 
     // delete this after
     if (document.querySelector('#in_id').value != '') {
-        emptyObj._id = document.querySelector('#in_id').value;
+        emptyObj._id = +document.querySelector('#in_id').value;
     }
 
     document.querySelector('#input_form').innerHTML = 'Сохранено!';
-    storage.save(emptyObj);
+    storage.saveBuf(emptyObj);
     reloadStorage();
 };
 
@@ -102,11 +102,11 @@ const reloadStorage = () => {
     operators = storage.all(Operator);
 };
 
-let storage = new LocalStorage();
-let drillers = storage.all(Driller);
-let equipments = storage.all(Equipment);
-let projects = storage.all(Project);
-let operators = storage.all(Operator);
+let storage = new Buffer();
+let drillers = storage.allBuf(Driller);
+let equipments = storage.allBuf(Equipment);
+let projects = storage.allBuf(Project);
+let operators = storage.allBuf(Operator);
 
 renderAll();
 addKeyCreateForm(Driller);
