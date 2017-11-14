@@ -56,7 +56,7 @@ const saveButton = (object) => {
     }
 
     document.querySelector('#input_form').innerHTML = 'Сохранено!';
-    storage.saveBuf(emptyObj);
+    storage.save(emptyObj);
     reloadStorage();
 };
 
@@ -103,10 +103,10 @@ const reloadStorage = () => {
 };
 
 let storage = new Buffer();
-let drillers = storage.allBuf(Driller);
-let equipments = storage.allBuf(Equipment);
-let projects = storage.allBuf(Project);
-let operators = storage.allBuf(Operator);
+let drillers = storage.all(Driller);
+let equipments = storage.all(Equipment);
+let projects = storage.all(Project);
+let operators = storage.all(Operator);
 
 renderAll();
 addKeyCreateForm(Driller);

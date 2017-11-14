@@ -4,7 +4,7 @@ class Buffer extends LocalStorage {
         this.buffer = buffer;
     }
 
-    allBuf(cls) {
+    all(cls) {
         const data = [];
         const clsName = cls.prototype.constructor.name;
         if (this.buffer.has(clsName)) { // check buffer
@@ -20,17 +20,17 @@ class Buffer extends LocalStorage {
         return data;
     }
 
-    saveBuf(object) {
-        this.allBuf(object.constructor); // protection of case then save init before load storage
+    save(object) {
+        this.all(object.constructor); // protection of case then save init before load storage
         super.save(object);
         this._saveToBuffer(object);
         return object._id;
     }
 
-    loadBuf(cls, id) {
+    load(cls, id) {
         let data = [];
         const clsName = cls.prototype.constructor.name;
-        if (this.buffer.has(clsName) === false) { this.allBuf(cls); }
+        if (this.buffer.has(clsName) === false) { this.all(cls); }
         data = this.buffer.get(clsName).get(id);
         return data;
     }
