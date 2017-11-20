@@ -1,7 +1,7 @@
 class Buffer extends LocalStorage {
-    constructor(all, save, buffer = new Map()) {
-        super(all, save);
-        this.buffer = buffer;
+    constructor() {
+        super();
+        this.buffer = new Map();
     }
 
     all(cls) {
@@ -11,13 +11,15 @@ class Buffer extends LocalStorage {
             this.buffer.get(clsName).forEach((item) => {
                 data.push(item);
             });
-        } else if (super.all(cls) !== false) { // here we call super.all twice, it sad :(
+            return data;
+        } else if (super.all(cls)) { // here we call super.all twice, it sad :(
             super.all(cls).map((x) => { // if buffer empty - load from local storage
                 data.push(x);
                 return this._saveToBuffer(x);
             });
+            return data;
         }
-        return data;
+        return null;
     }
 
     save(object) {
@@ -30,14 +32,18 @@ class Buffer extends LocalStorage {
     load(cls, id) {
         let data = [];
         const clsName = cls.prototype.constructor.name;
-        if (this.buffer.has(clsName) === false) { this.all(cls); }
-        data = this.buffer.get(clsName).get(id);
+        if (!this.buffer.has(clsName)) { // protection of case then load init before load storage
+            this.all(cls);
+        }
+        if (!this.buffer.has(clsName)) { return null; }
+        data = this.buffer.get(clsName).get(+id);
+        data = (!data) ? null : data;
         return data;
     }
 
     _saveToBuffer(object) {
         const className = object.constructor.name;
-        if (this.buffer.has(className) === false) {
+        if (!this.buffer.has(className)) {
             this.buffer.set(className, new Map());
         }
         this.buffer.get(className).set(object._id, object);

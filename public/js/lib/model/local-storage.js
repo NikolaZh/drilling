@@ -3,9 +3,7 @@ class LocalStorage extends BaseStorage {
         super.all(cls);
         const storageName = cls.prototype.constructor.name;
         const wrapObj = localStorage.getItem(storageName);
-        if (wrapObj === null) { // check our object in storage browser
-            return false;
-        }
+        if (wrapObj === null) { return wrapObj; } // check our object in storage browser
         const unwrapObj = JSON.parse(wrapObj).map(fields => cls.unwrap(fields));
         return unwrapObj;
     }
@@ -18,15 +16,15 @@ class LocalStorage extends BaseStorage {
         if (data) {
             data = JSON.parse(data).map(fields => object.constructor.unwrap(fields));
         }
-        if (object._id === null) {
+        if (!object._id) { // check object old or new (if new add id)
             object._id = this._increaseId(object);
             isNewObj = true;
-        } // check object old or new (if new add id)
+        }
         if (data && isNewObj) { // storage and newID exist => just add new object
             data.push(object);
         } else if (data) { // storage exist, but object is old = looking for obj with same id in storage and replace
             for (const key in data) {
-                if (data[key]._id == object._id) {
+                if (data[key]._id === object._id) {
                     for (const key1 in data[key]._f) {
                         data[key]._f[key1] = object._f[key1];
                     }
@@ -44,14 +42,15 @@ class LocalStorage extends BaseStorage {
         const data = this.all(cls);
         if (data) {
             for (const key in data) {
-                if (data[key]._id == id) { return data[key]; }
+                if (data[key]._id === +id) { return data[key]; }
             }
-        } else return false;
+        }
+        return null;
     }
 
     _increaseId(object) {
         const objType = object.constructor.name;
-        if (localStorage.getItem(`${objType}_ids`) === null) {
+        if (!localStorage.getItem(`${objType}_ids`)) {
             localStorage.setItem(`${objType}_ids`, 1);
             return 1;
         }
