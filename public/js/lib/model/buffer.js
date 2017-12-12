@@ -1,4 +1,4 @@
-class Buffer extends LocalStorage {
+class StorageBuffer extends LocalStorage {
     constructor() {
         super();
         this.buffer = new Map();
@@ -6,24 +6,21 @@ class Buffer extends LocalStorage {
 
     all(cls) {
         const data = [];
+        let alldata;
         const clsName = cls.prototype.constructor.name;
         if (this.buffer.has(clsName)) { // check buffer
             this.buffer.get(clsName).forEach((item) => {
                 data.push(item);
             });
             return data;
-        } else if (super.all(cls)) { // here we call super.all twice, it sad :(
-            super.all(cls).map((x) => { // if buffer empty - load from local storage
-                data.push(x);
-                return this._saveToBuffer(x);
-            });
-            return data;
         }
-        return null;
+        return super.all(cls).map((x) => { // if buffer empty - load from local storage
+            this._saveToBuffer(x);
+            return x;
+        });
     }
 
     save(object) {
-        this.all(object.constructor); // protection of case then save init before load storage
         super.save(object);
         this._saveToBuffer(object);
         return object._id;
@@ -35,10 +32,12 @@ class Buffer extends LocalStorage {
         if (!this.buffer.has(clsName)) { // protection of case then load init before load storage
             this.all(cls);
         }
-        if (!this.buffer.has(clsName)) { return null; }
+        if (!this.buffer.has(clsName)) {
+            return null;
+        }
         data = this.buffer.get(clsName).get(+id);
         data = (!data) ? null : data;
-        return data;
+        return this.buffer.get(clsName).get(+id) || null;
     }
 
     _saveToBuffer(object) {

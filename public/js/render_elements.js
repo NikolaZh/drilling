@@ -18,6 +18,10 @@ const displayForm = (object) => { // display form on page to create new position
         addElement('li', `li_${key}`, 'input_form');
         addElement('input', `in_${key}`, `li_${key}`);
         document.querySelector(`#in_${key}`).setAttribute('placeholder', `${object.fields[key]}`);
+
+        if (key === 'date1' || key === 'date2') {
+            document.querySelector(`#in_${key}`).setAttribute('type', 'date');
+        }
     }
 
     // delete this after
@@ -84,15 +88,172 @@ const renderTable = (tableName, object) => {
     }
 };
 
+const renderTableForProjects = (tableName, object, options) => {
+    let counterTr = 0;
+    let counterTd = 0;
+    object = object.map((el) => {
+        Object.defineProperty(el._f, 'owns', {
+            enumerable: false,
+        });
+        return el;
+    });
+    for (const key in object) {
+        addElement('tr', `tr_${counterTr}_${tableName}`, `${tableName}`);
+        for (const key1 in object[key].fields) {
+            addElement('td', `td_${counterTd}_${tableName}`, `tr_${counterTr}_${tableName}`);
+            if (key1 === 'date1' || key1 === 'date2') {
+                addTextToElement(`td_${counterTd}_${tableName}`, (new Date(object[key].fields[key1])).toLocaleString('ru', options));
+            } else {
+                addTextToElement(`td_${counterTd}_${tableName}`, object[key].fields[key1]);
+            }
+            counterTd++;
+        }
+        counterTr++;
+        addElement('tr', `tr_${counterTr}_${tableName}`, `${tableName}`);
+        renderOwnsTable(`tr_${counterTr}_${tableName}`, object[key]);
+        counterTr++;
+    }
+};
+
+const renderOwnsTable = (tableName, object) => {
+    let counterTr = 0;
+    let counterTd = 0;
+    if (object._f.owns[0]) {
+        addElement('table', `owns_${tableName}`, `${tableName}`);
+        addClassToElement(`owns_${tableName}`, 'table');
+        addElement('tr', `tr_owns_${tableName}`, `owns_${tableName}`);
+        addTextToElement(`tr_owns_${tableName}`, 'Заняты на проекте:');
+        counterTr++;
+        for (const key in object._f.owns) {
+            addElement('tr', `tr_owns_${tableName}_${counterTr}`, `owns_${tableName}`);
+            for (const key1 in object._f.owns[key]) {
+                addElement('td', `td_${counterTd}_tr_owns_${tableName}`, `tr_owns_${tableName}_${counterTr}`);
+                if (key1 === 'dateStart' || key1 === 'dateEnd') {
+                    addTextToElement(`td_${counterTd}_tr_owns_${tableName}`, (new Date(object._f.owns[key][key1])).toLocaleString('ru', options));
+                } else {
+                    addTextToElement(`td_${counterTd}_tr_owns_${tableName}`, object._f.owns[key][key1]);
+                }
+                counterTd++;
+            }
+            counterTr++;
+        }
+    }
+};
+
+const formForOwn = () => {
+    let counter = 0;
+    for (const key in projects) {
+        counter++;
+    }
+    if (counter > 0) {
+        document.querySelector('#input_projects').setAttribute('min', '1');
+    } else {
+        document.querySelector('#input_projects').setAttribute('min', '0');
+    }
+    document.querySelector('#input_projects').setAttribute('max', `${projects.length}`);
+    const li_own = ['li_own1', 'li_own2', 'li_own3'];
+    for (const key in li_own) {
+        document.querySelector(`#${li_own[key]}`).setAttribute('onclick', 'radioChecked()');
+    }
+};
+
+const radioChecked = () => {
+    const radioValue = ['rad1', 'rad2', 'rad3'];
+    let keyChecked;
+    for (const key in radioValue) {
+        if (document.getElementsByName('own')[key].checked) {
+            keyChecked = radioValue[key];
+            break;
+        }
+    }
+    let data;
+    switch (keyChecked) {
+        case 'rad1':
+            data = drillers;
+            nameOwn = 'Driller';
+            break;
+        case 'rad2':
+            data = operators;
+            nameOwn = 'Operator';
+            break;
+        case 'rad3':
+            data = equipments;
+            nameOwn = 'Equipment';
+            break;
+    }
+    let counter = 0;
+    for (const key in data) {
+        counter++;
+    }
+    if (counter > 0) {
+        counter = 1;
+        document.querySelector('#input_own').innerHTML = nameOwn;
+        resetOwnForm();
+        addElement('input', 'input_own_id', 'input_own_idlist');
+        document.querySelector('#input_own_id').setAttribute('type', 'number');
+        document.querySelector('#input_own_id').setAttribute('min', `${counter}`);
+        document.querySelector('#input_own_id').setAttribute('max', `${data.length}`);
+        addElement('input', 'own_date1', 'input_own_date1');
+        document.querySelector('#own_date1').setAttribute('type', 'date');
+        addElement('input', 'own_date2', 'input_own_date2');
+        document.querySelector('#own_date2').setAttribute('type', 'date');
+        addElement('button', 'send_own_button', 'send_own_button_li');
+        addTextToElement('send_own_button', `Send ${nameOwn}`);
+        document.querySelector('#send_own_button').setAttribute('onclick', 'sendOwnButton(nameOwn)');
+    } else {
+        document.querySelector('#input_own').innerHTML = `Нет ни одного ${nameOwn}`;
+        resetOwnForm();
+    }
+};
+
+const resetOwnForm = () => {
+    document.querySelector('#input_own_idlist').innerHTML = '';
+    document.querySelector('#input_own_date1').innerHTML = '';
+    document.querySelector('#input_own_date2').innerHTML = '';
+    document.querySelector('#send_own_button_li').innerHTML = '';
+};
+
+const sendOwnButton = (nameOwn) => {
+    const projectId = +document.querySelector('#input_projects').value;
+    const projectChecked = storage.load(Project, projectId);
+    const objectId = +document.querySelector('#input_own_id').value;
+    const dateStart = document.querySelector('#own_date1').value;
+    const dateEnd = document.querySelector('#own_date2').value;
+    let objectChecked = {};
+    switch (nameOwn) {
+        case 'Driller':
+            objectChecked = storage.load(Driller, objectId);
+            break;
+        case 'Operator':
+            objectChecked = storage.load(Operator, objectId);
+            break;
+        case 'Equipment':
+            objectChecked = storage.load(Equipment, objectId);
+            break;
+    }
+    setObjToBusy(projectChecked, objectChecked, new Date(dateStart), new Date(dateEnd));
+    reloadStorage();
+    renderAll();
+};
+
+let nameOwn;
+
+const options = {
+    day: 'numeric',
+    year: 'numeric',
+    month: 'numeric',
+};
+
 const renderAll = () => {
     renderTableHeader('drillers_tab', 'Drillers', Driller);
     renderTable('Drillers', drillers);
     renderTableHeader('equipment_tab', 'Equipments', Equipment);
     renderTable('Equipments', equipments);
-    renderTableHeader('project_tab', 'Projects', Project);
-    renderTable('Projects', projects);
     renderTableHeader('operators_tab', 'Operators', Operator);
     renderTable('Operators', operators);
+    renderTableHeader('project_tab', 'Projects', Project);
+    renderTableForProjects('Projects', projects, options);
+    formForOwn();
 };
 
 const reloadStorage = () => {
@@ -102,7 +263,7 @@ const reloadStorage = () => {
     operators = storage.all(Operator);
 };
 
-let storage = new Buffer();
+let storage = new StorageBuffer();
 let drillers = storage.all(Driller);
 let equipments = storage.all(Equipment);
 let projects = storage.all(Project);

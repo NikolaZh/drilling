@@ -21,22 +21,47 @@ html
 
                 div(class="row")
                     div(class="col-2")
-                        h3 Projects
-                    div(class="col-10" id="project_tab")
-
-                div(class="row")
-                    div(class="col-2")
                         h3 Operators
                     div(class="col-10" id="operators_tab")
 
+                div(class="row")
+                    div(class="col-2")
+                        h3 Projects
+                    div(class="col-10" id="project_tab")            
+
 
 
 
             div(class="row")
-                ul(class="nomark_list" id="input_form")
+                div(class="col-6")
+                    ul(class="nomark_list" id="input_form")
+                div(class="col-6")
+                    ul(class="nomark_list" id="buttons_add")
 
             div(class="row")
-                ul(class="nomark_list" id="buttons_add")
+               div(class="col-6")
+                    ul(class="nomark_list" id="input_form_own")
+                        li(class="nomark_list" id="li_own")
+                            p Выберите Project
+                            input(id ="input_projects" type="number")
+                        li(class="nomark_list" id="li_owns")
+                            p Кого хотите добавить в Project
+                            form(id="own_form")
+                                input(id="li_own1" type="radio" name="own" value="rad1")
+                                p Driller        
+                                input(id="li_own2" type="radio" name="own" value="rad2")
+                                p Operator
+                                input(id="li_own3" type="radio" name="own" value="rad3")
+                                p Equipment
+  
+               div(class="col-6")
+                    ul(class="nomark_list" id="input_own_all")
+                        li(class="nomark_list" id="input_own")
+                        li(class="nomark_list" id="input_own_idlist")
+                        li(class="nomark_list" id="input_own_date1")
+                        li(class="nomark_list" id="input_own_date2")
+                        li(class="nomark_list" id="send_own_button_li")
+                             
 
 
 
@@ -49,3 +74,4 @@ html
     script(src='/static/js/lib/model/buffer.js')
     script(src='/static/js/models.js')
     script(src='/static/js/render_elements.js')
+    script(src='/static/js/lib/project-lib.js')

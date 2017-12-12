@@ -2,8 +2,11 @@ class LocalStorage extends BaseStorage {
     all(cls) {
         super.all(cls);
         const storageName = cls.prototype.constructor.name;
-        const wrapObj = localStorage.getItem(storageName);
-        if (wrapObj === null) { return wrapObj; } // check our object in storage browser
+        let wrapObj = localStorage.getItem(storageName);
+        if (!wrapObj) {
+            wrapObj = [];
+            return wrapObj;
+        } // check our object in storage browser
         const unwrapObj = JSON.parse(wrapObj).map(fields => cls.unwrap(fields));
         return unwrapObj;
     }

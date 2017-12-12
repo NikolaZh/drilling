@@ -1,0 +1,24 @@
+
+1) учет занятостей наших объектов:
+для этого добавил дополнительное поле _owns в Projects, оно содержит массив объектов-"работников" на этом проекте (каждый объект содержит type (Driller), id (соотв из сообщества Drillers), dateStart, dateEnd )
+
+2) в local-storage сделал небольшое изменение, чтобы при сохранении уже существующего Project, не терялось поле _owns.
+
+if (storageName == 'Project') {
+                        for (const key2 in object._owns) {
+                            data[key]._owns[key2] = object._owns[key2];
+                        }
+
+наверное не очень хорошо? если по другому, то пока придумал только так: owns пишем как обычное свойство в fields, а уже при отображении, прежде чем выводить Projects на страничке, делаем это свойство owns как enumerable: false. и после этого уже отображать все наши обысные поля.
+
+
+
+
+
+
+let Proj = storage.load(Project, 1)
+let Oper = storage.load(Operator,1)
+let date1 = new Date(2017,11,12)
+let date2 = new Date(2017,11, 31)
+
+setObjToBusy(Proj,Oper,date1,date2)
