@@ -141,16 +141,13 @@ const renderOwnsTable = (tableName, object) => {
 };
 
 const formForOwn = () => {
-    let counter = 0;
-    for (const key in projects) {
-        counter++;
-    }
-    if (counter > 0) {
+    if (projects.length) {
         document.querySelector('#input_projects').setAttribute('min', '1');
+        document.querySelector('#input_projects').setAttribute('max', `${projects.length}`);
     } else {
         document.querySelector('#input_projects').setAttribute('min', '0');
+        document.querySelector('#input_projects').setAttribute('max', `${projects.length}`);
     }
-    document.querySelector('#input_projects').setAttribute('max', `${projects.length}`);
     const li_own = ['li_own1', 'li_own2', 'li_own3'];
     for (const key in li_own) {
         document.querySelector(`#${li_own[key]}`).setAttribute('onclick', 'radioChecked()');
@@ -181,17 +178,12 @@ const radioChecked = () => {
             nameOwn = 'Equipment';
             break;
     }
-    let counter = 0;
-    for (const key in data) {
-        counter++;
-    }
-    if (counter > 0) {
-        counter = 1;
+    if (data.length) {
         document.querySelector('#input_own').innerHTML = nameOwn;
         resetOwnForm();
         addElement('input', 'input_own_id', 'input_own_idlist');
         document.querySelector('#input_own_id').setAttribute('type', 'number');
-        document.querySelector('#input_own_id').setAttribute('min', `${counter}`);
+        document.querySelector('#input_own_id').setAttribute('min', '1');
         document.querySelector('#input_own_id').setAttribute('max', `${data.length}`);
         addElement('input', 'own_date1', 'input_own_date1');
         document.querySelector('#own_date1').setAttribute('type', 'date');
