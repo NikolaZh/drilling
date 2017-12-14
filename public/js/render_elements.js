@@ -88,6 +88,7 @@ const renderTable = (tableName, object) => {
     }
 };
 
+
 const renderTableForProjects = (tableName, object, options) => {
     let counterTr = 0;
     let counterTd = 0;
@@ -207,25 +208,34 @@ const resetOwnForm = () => {
 
 const sendOwnButton = (nameOwn) => {
     const projectId = +document.querySelector('#input_projects').value;
-    const projectChecked = storage.load(Project, projectId);
     const objectId = +document.querySelector('#input_own_id').value;
     const dateStart = document.querySelector('#own_date1').value;
     const dateEnd = document.querySelector('#own_date2').value;
-    let objectChecked = {};
-    switch (nameOwn) {
-        case 'Driller':
-            objectChecked = storage.load(Driller, objectId);
-            break;
-        case 'Operator':
-            objectChecked = storage.load(Operator, objectId);
-            break;
-        case 'Equipment':
-            objectChecked = storage.load(Equipment, objectId);
-            break;
+    if (!projectId) {
+        document.querySelector('#input_own').innerHTML = 'Вы не указали id Project!';
+    } else if (!objectId) {
+        document.querySelector('#input_own').innerHTML = `Вы не указали id ${nameOwn}!`;
+    } else if (!dateStart || !dateEnd) {
+        document.querySelector('#input_own').innerHTML = 'Вы указали некоректные даты занятости';
+    } else {
+        const projectChecked = storage.load(Project, projectId);
+        let objectChecked = {};
+        switch (nameOwn) {
+            case 'Driller':
+                objectChecked = storage.load(Driller, objectId);
+                break;
+            case 'Operator':
+                objectChecked = storage.load(Operator, objectId);
+                break;
+            case 'Equipment':
+                objectChecked = storage.load(Equipment, objectId);
+                break;
+        }
+        resetOwnForm();
+        setObjToBusy(projectChecked, objectChecked, new Date(dateStart), new Date(dateEnd));
+        reloadStorage();
+        renderAll();
     }
-    setObjToBusy(projectChecked, objectChecked, new Date(dateStart), new Date(dateEnd));
-    reloadStorage();
-    renderAll();
 };
 
 let nameOwn;
