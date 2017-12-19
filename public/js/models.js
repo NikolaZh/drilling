@@ -107,6 +107,29 @@ class Project extends Model {
         }
         return data;
     }
+
+    bind(object, start, end) {
+        const Own = {
+            type: object.constructor.name,
+            id: object.id,
+            dateStart: start,
+            dateEnd: end,
+        };
+        this.owns.push(Own);
+        return this;
+    }
+
+    getBinded(object) {
+        const data = new Map();
+        const clsObj = object.constructor.name;
+        data.set(clsObj, new Map());
+        for (const key in this.owns) {
+            if (this.owns[key].type === clsObj) {
+                data.get(this.owns[key].type).set(this.owns[key].id, this.owns[key]);
+            }
+        }
+        return data.get(clsObj);
+    }
 }
 
 class Operator extends Model {

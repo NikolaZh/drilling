@@ -232,7 +232,7 @@ const sendOwnButton = (nameOwn) => {
                 break;
         }
         resetOwnForm();
-        setObjToBusy(projectChecked, objectChecked, new Date(dateStart), new Date(dateEnd));
+        document.querySelector('#input_form').innerHTML = setObjToBusy(projectChecked, objectChecked, new Date(dateStart), new Date(dateEnd));
         reloadStorage();
         renderAll();
     }

@@ -6,7 +6,6 @@ class StorageBuffer extends LocalStorage {
 
     all(cls) {
         const data = [];
-        let alldata;
         const clsName = cls.prototype.constructor.name;
         if (this.buffer.has(clsName)) { // check buffer
             this.buffer.get(clsName).forEach((item) => {
@@ -27,7 +26,6 @@ class StorageBuffer extends LocalStorage {
     }
 
     load(cls, id) {
-        let data = [];
         const clsName = cls.prototype.constructor.name;
         if (!this.buffer.has(clsName)) { // protection of case then load init before load storage
             this.all(cls);
@@ -35,8 +33,6 @@ class StorageBuffer extends LocalStorage {
         if (!this.buffer.has(clsName)) {
             return null;
         }
-        data = this.buffer.get(clsName).get(+id);
-        data = (!data) ? null : data;
         return this.buffer.get(clsName).get(+id) || null;
     }
 
