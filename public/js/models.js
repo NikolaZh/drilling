@@ -70,6 +70,15 @@ class Project extends Model {
 
     constructor(fields = { owns: [] }, id = null) {
         super(fields, id);
+        this.bufferOwn = new Map();
+        for (const key in this.owns) { // init map structure from array owns and save in bufferOwn
+            if (!this.bufferOwn.has(this.owns[key].type)) {
+                this.bufferOwn.set(this.owns[key].type, new Map());
+                this.bufferOwn.get(this.owns[key].type).set(this.owns[key].id, this.owns[key]);
+            } else {
+                this.bufferOwn.get(this.owns[key].type).set(this.owns[key].id, this.owns[key]);
+            }
+        }
     }
 
     get name() {
@@ -109,26 +118,25 @@ class Project extends Model {
     }
 
     bind(object, start, end) {
+        const clsObj = object.constructor.name;
         const Own = {
-            type: object.constructor.name,
+            type: clsObj,
             id: object.id,
             dateStart: start,
             dateEnd: end,
         };
         this.owns.push(Own);
+        if (!this.bufferOwn.has(clsObj)) {
+            this.bufferOwn.set(clsObj, new Map());
+            this.bufferOwn.get(clsObj).set(object.id, Own);
+        } else {
+            this.bufferOwn.get(clsObj).set(object.id, Own);
+        }
         return this;
     }
 
     getBinded(object) {
-        const data = new Map();
-        const clsObj = object.constructor.name;
-        data.set(clsObj, new Map());
-        for (const key in this.owns) {
-            if (this.owns[key].type === clsObj) {
-                data.get(this.owns[key].type).set(this.owns[key].id, this.owns[key]);
-            }
-        }
-        return data.get(clsObj);
+        return this.bufferOwn.get(object.constructor.name);
     }
 }
 

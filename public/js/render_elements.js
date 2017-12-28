@@ -61,7 +61,7 @@ const saveButton = (object) => {
 
     document.querySelector('#input_form').innerHTML = 'Сохранено!';
     storage.save(emptyObj);
-    reloadStorage();
+    renderAll();
 };
 
 const renderTableHeader = (parentEl, tableName, object) => {
@@ -75,45 +75,46 @@ const renderTableHeader = (parentEl, tableName, object) => {
 };
 
 const renderTable = (tableName, object) => {
-    let counterTr = 0;
-    let counterTd = 0;
-    for (const key in object) {
-        addElement('tr', `tr_${counterTr}_${tableName}`, `${tableName}`);
-        for (const key1 in object[key].fields) {
-            addElement('td', `td_${counterTd}_${tableName}`, `tr_${counterTr}_${tableName}`);
-            addTextToElement(`td_${counterTd}_${tableName}`, object[key].fields[key1]);
-            counterTd++;
-        }
-        counterTr++;
+    if (object) {
+        let counterTr = 0;
+        let counterTd = 0;
+        object.forEach((el) => {
+            addElement('tr', `tr_${counterTr}_${tableName}`, `${tableName}`);
+            for (const key in el.fields) {
+                addElement('td', `td_${counterTd}_${tableName}`, `tr_${counterTr}_${tableName}`);
+                addTextToElement(`td_${counterTd}_${tableName}`, el.fields[key]);
+                counterTd++;
+            }
+            counterTr++;
+        });
     }
 };
-
 
 const renderTableForProjects = (tableName, object, options) => {
     let counterTr = 0;
     let counterTd = 0;
-    object = object.map((el) => {
+    object.forEach((el) => {
         Object.defineProperty(el._f, 'owns', {
             enumerable: false,
         });
         return el;
     });
-    for (const key in object) {
+    object.forEach((el) => {
         addElement('tr', `tr_${counterTr}_${tableName}`, `${tableName}`);
-        for (const key1 in object[key].fields) {
+        for (const key in el.fields) {
             addElement('td', `td_${counterTd}_${tableName}`, `tr_${counterTr}_${tableName}`);
-            if (key1 === 'date1' || key1 === 'date2') {
-                addTextToElement(`td_${counterTd}_${tableName}`, (new Date(object[key].fields[key1])).toLocaleString('ru', options));
+            if (key === 'date1' || key === 'date2') {
+                addTextToElement(`td_${counterTd}_${tableName}`, (new Date(el.fields[key])).toLocaleString('ru', options));
             } else {
-                addTextToElement(`td_${counterTd}_${tableName}`, object[key].fields[key1]);
+                addTextToElement(`td_${counterTd}_${tableName}`, el.fields[key]);
             }
             counterTd++;
         }
         counterTr++;
         addElement('tr', `tr_${counterTr}_${tableName}`, `${tableName}`);
-        renderOwnsTable(`tr_${counterTr}_${tableName}`, object[key]);
+        renderOwnsTable(`tr_${counterTr}_${tableName}`, el);
         counterTr++;
-    }
+    });
 };
 
 const renderOwnsTable = (tableName, object) => {
@@ -142,12 +143,12 @@ const renderOwnsTable = (tableName, object) => {
 };
 
 const formForOwn = () => {
-    if (projects.length) {
+    if (projects) {
         document.querySelector('#input_projects').setAttribute('min', '1');
-        document.querySelector('#input_projects').setAttribute('max', `${projects.length}`);
+        document.querySelector('#input_projects').setAttribute('max', `${projects.size}`);
     } else {
         document.querySelector('#input_projects').setAttribute('min', '0');
-        document.querySelector('#input_projects').setAttribute('max', `${projects.length}`);
+        document.querySelector('#input_projects').setAttribute('max', `${projects.size}`);
     }
     const li_own = ['li_own1', 'li_own2', 'li_own3'];
     for (const key in li_own) {
@@ -179,13 +180,13 @@ const radioChecked = () => {
             nameOwn = 'Equipment';
             break;
     }
-    if (data.length) {
+    if (data) {
         document.querySelector('#input_own').innerHTML = nameOwn;
         resetOwnForm();
         addElement('input', 'input_own_id', 'input_own_idlist');
         document.querySelector('#input_own_id').setAttribute('type', 'number');
         document.querySelector('#input_own_id').setAttribute('min', '1');
-        document.querySelector('#input_own_id').setAttribute('max', `${data.length}`);
+        document.querySelector('#input_own_id').setAttribute('max', `${data.size}`);
         addElement('input', 'own_date1', 'input_own_date1');
         document.querySelector('#own_date1').setAttribute('type', 'date');
         addElement('input', 'own_date2', 'input_own_date2');
@@ -232,8 +233,13 @@ const sendOwnButton = (nameOwn) => {
                 break;
         }
         resetOwnForm();
-        document.querySelector('#input_form').innerHTML = setObjToBusy(projectChecked, objectChecked, new Date(dateStart), new Date(dateEnd));
-        reloadStorage();
+        try {
+            if (setObjToBusy(projectChecked, objectChecked, new Date(dateStart), new Date(dateEnd))) {
+                document.querySelector('#input_form').innerHTML = `${nameOwn} successfull added`;
+            }
+        } catch (e) {
+            document.querySelector('#input_form').innerHTML = e;
+        }
         renderAll();
     }
 };
@@ -258,19 +264,23 @@ const renderAll = () => {
     formForOwn();
 };
 
-const reloadStorage = () => {
-    drillers = storage.all(Driller);
-    equipments = storage.all(Equipment);
-    projects = storage.all(Project);
-    operators = storage.all(Operator);
-};
-
 let storage = new StorageBuffer();
-let drillers = storage.all(Driller);
-let equipments = storage.all(Equipment);
-let projects = storage.all(Project);
-let operators = storage.all(Operator);
-
+if (!storage.all(Driller).length) {
+    storage.buffer.set('Driller', new Map());
+}
+if (!storage.all(Equipment).length) {
+    storage.buffer.set('Equipment', new Map());
+}
+if (!storage.all(Operator).length) {
+    storage.buffer.set('Operator', new Map());
+}
+if (!storage.all(Project).length) {
+    storage.buffer.set('Project', new Map());
+}
+const drillers = storage.buffer.get('Driller');
+const equipments = storage.buffer.get('Equipment');
+const projects = storage.buffer.get('Project');
+const operators = storage.buffer.get('Operator');
 renderAll();
 addKeyCreateForm(Driller);
 addKeyCreateForm(Equipment);
