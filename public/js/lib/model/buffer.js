@@ -5,12 +5,9 @@ class StorageBuffer extends LocalStorage {
     }
 
     all(cls) {
-        const data = [];
         const clsName = cls.prototype.constructor.name;
         if (this.buffer.has(clsName)) { // check buffer
-            this.buffer.get(clsName).forEach((item) => {
-                data.push(item);
-            });
+            const data = [...this.buffer.get(clsName).values()];
             return data;
         }
         return super.all(cls).map((x) => { // if buffer empty - load from local storage

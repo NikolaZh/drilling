@@ -234,9 +234,8 @@ const sendOwnButton = (nameOwn) => {
         }
         resetOwnForm();
         try {
-            if (setObjToBusy(projectChecked, objectChecked, new Date(dateStart), new Date(dateEnd))) {
-                document.querySelector('#input_form').innerHTML = `${nameOwn} successfull added`;
-            }
+            projectChecked.setObjToBusy(objectChecked, new Date(dateStart), new Date(dateEnd));
+            document.querySelector('#input_form').innerHTML = `${nameOwn} successfull added`;
         } catch (e) {
             document.querySelector('#input_form').innerHTML = e;
         }

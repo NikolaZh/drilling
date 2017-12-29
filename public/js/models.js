@@ -72,11 +72,12 @@ class Project extends Model {
         super(fields, id);
         this.bufferOwn = new Map();
         for (const key in this.owns) { // init map structure from array owns and save in bufferOwn
-            if (!this.bufferOwn.has(this.owns[key].type)) {
-                this.bufferOwn.set(this.owns[key].type, new Map());
-                this.bufferOwn.get(this.owns[key].type).set(this.owns[key].id, this.owns[key]);
+            const elOwns = this.owns[key];
+            if (!this.bufferOwn.has(elOwns.type)) {
+                this.bufferOwn.set(elOwns.type, new Map());
+                this.bufferOwn.get(elOwns.type).set(elOwns.id, elOwns);
             } else {
-                this.bufferOwn.get(this.owns[key].type).set(this.owns[key].id, this.owns[key]);
+                this.bufferOwn.get(elOwns.type).set(elOwns.id, elOwns);
             }
         }
     }
@@ -137,6 +138,41 @@ class Project extends Model {
 
     getBinded(object) {
         return this.bufferOwn.get(object.constructor.name);
+    }
+
+    setObjToBusy(object, start, end) {
+        const dayS = this.date1;
+        const dayE = this.date2;
+        if (start > end) {
+            throw new RangeError('Дата начала должна быть меньше даты конца');
+        }
+        if (dayS > start || dayE < end) {
+            throw new RangeError('Указанные даты не входят диапазон Project');
+        }
+        if (!this.checkItemFreeOnDates(object, start, end)) {
+            throw new RangeError(`${object.constructor.name} занят в эти дни`);
+        }
+        this.bind(object, start, end);
+        storage.save(this);
+    }
+
+    checkItemFreeOnDates(object, start, end) {
+        const dataProjects = storage.all(Project);
+        for (const key in dataProjects) {
+            const bindedOwns = dataProjects[key].getBinded(object);
+            if (bindedOwns && bindedOwns.has(object.id)) { // getBinded can return undefined, we check it
+                const dayS = new Date(bindedOwns.get(object.id).dateStart);
+                const dayE = new Date(bindedOwns.get(object.id).dateEnd);
+                const thisAlreadyHaveThisObj = dataProjects[key].id === this.id;
+                const startInRange = ((dayS < start) && (dayE > start));
+                const endInRange = ((dayS < end) && (dayE > end));
+                const startEndIncludeRange = ((start < dayS) && (end > dayS));
+                if (thisAlreadyHaveThisObj || startInRange || endInRange || startEndIncludeRange) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
 
