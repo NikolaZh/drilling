@@ -153,10 +153,12 @@ class Project extends Model {
             throw new RangeError(`${object.constructor.name} занят в эти дни`);
         }
         this.bind(object, start, end);
+        const storage = new StorageBuffer();
         storage.save(this);
     }
 
     checkItemFreeOnDates(object, start, end) {
+        const storage = new StorageBuffer();
         const dataProjects = storage.all(Project);
         for (const key in dataProjects) {
             const bindedOwns = dataProjects[key].getBinded(object);
