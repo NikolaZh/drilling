@@ -139,43 +139,6 @@ class Project extends Model {
     getBinded(object) {
         return this.bufferOwn.get(object.constructor.name);
     }
-
-    setObjToBusy(object, start, end) {
-        const dayS = this.date1;
-        const dayE = this.date2;
-        if (start > end) {
-            throw new RangeError('Дата начала должна быть меньше даты конца');
-        }
-        if (dayS > start || dayE < end) {
-            throw new RangeError('Указанные даты не входят диапазон Project');
-        }
-        if (!this.checkItemFreeOnDates(object, start, end)) {
-            throw new RangeError(`${object.constructor.name} занят в эти дни`);
-        }
-        this.bind(object, start, end);
-        const storage = new StorageBuffer();
-        storage.save(this);
-    }
-
-    checkItemFreeOnDates(object, start, end) {
-        const storage = new StorageBuffer();
-        const dataProjects = storage.all(Project);
-        for (const key in dataProjects) {
-            const bindedOwns = dataProjects[key].getBinded(object);
-            if (bindedOwns && bindedOwns.has(object.id)) { // getBinded can return undefined, we check it
-                const dayS = new Date(bindedOwns.get(object.id).dateStart);
-                const dayE = new Date(bindedOwns.get(object.id).dateEnd);
-                const thisAlreadyHaveThisObj = dataProjects[key].id === this.id;
-                const startInRange = ((dayS < start) && (dayE > start));
-                const endInRange = ((dayS < end) && (dayE > end));
-                const startEndIncludeRange = ((start < dayS) && (end > dayS));
-                if (thisAlreadyHaveThisObj || startInRange || endInRange || startEndIncludeRange) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 }
 
 class Operator extends Model {
@@ -197,5 +160,45 @@ class Operator extends Model {
 
     get phone() {
         return this.fields.phone;
+    }
+}
+
+class Scheduler {
+    constructor(storage) {
+        this.storage = storage;
+    }
+
+    setObjToBusy(project, object, start, end) {
+        const dayS = project.date1;
+        const dayE = project.date2;
+        if (start > end) {
+            throw new RangeError('Дата начала должна быть меньше даты конца');
+        }
+        if (dayS > start || dayE < end) {
+            throw new RangeError('Указанные даты не входят диапазон Project');
+        }
+        if (!this.checkItemFreeOnDates(object, start, end)) {
+            throw new RangeError(`${object.constructor.name} занят в эти дни`);
+        }
+        project.bind(object, start, end);
+        this.storage.save(project);
+    }
+
+    checkItemFreeOnDates(object, start, end) {
+        const dataProjects = this.storage.all(Project);
+        for (const value of dataProjects) {
+            const bindedOwns = value.getBinded(object);
+            if (bindedOwns && bindedOwns.has(object.id)) { // getBinded can return undefined, we check it
+                const dayS = new Date(bindedOwns.get(object.id).dateStart);
+                const dayE = new Date(bindedOwns.get(object.id).dateEnd);
+                const startInRange = ((dayS < start) && (dayE > start));
+                const endInRange = ((dayS < end) && (dayE > end));
+                const startEndIncludeRange = ((start < dayS) && (end > dayS));
+                if (startInRange || endInRange || startEndIncludeRange) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

@@ -234,7 +234,7 @@ const sendOwnButton = (nameOwn) => {
         }
         resetOwnForm();
         try {
-            projectChecked.setObjToBusy(objectChecked, new Date(dateStart), new Date(dateEnd));
+            scheduler.setObjToBusy(projectChecked, objectChecked, new Date(dateStart), new Date(dateEnd));
             document.querySelector('#input_form').innerHTML = `${nameOwn} successfull added`;
         } catch (e) {
             document.querySelector('#input_form').innerHTML = e;
@@ -276,6 +276,7 @@ if (!storage.all(Operator).length) {
 if (!storage.all(Project).length) {
     storage.buffer.set('Project', new Map());
 }
+const scheduler = new Scheduler(storage);
 const drillers = storage.buffer.get('Driller');
 const equipments = storage.buffer.get('Equipment');
 const projects = storage.buffer.get('Project');
