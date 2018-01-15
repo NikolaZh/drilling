@@ -72,7 +72,7 @@ class Project extends Model {
         super(fields, id);
         this.bufferOwn = new Map();
         for (const key of this.owns) { // init map structure from array owns and save in bufferOwn
-            const elOwns = this.owns[key];
+            const elOwns = key;
             if (!this.bufferOwn.has(elOwns.type)) {
                 this.bufferOwn.set(elOwns.type, new Map());
                 this.bufferOwn.get(elOwns.type).set(elOwns.id, elOwns);
