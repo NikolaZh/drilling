@@ -71,7 +71,7 @@ class Project extends Model {
     constructor(fields = { owns: [] }, id = null) {
         super(fields, id);
         this.bufferOwn = new Map();
-        for (const key in this.owns) { // init map structure from array owns and save in bufferOwn
+        for (const key of this.owns) { // init map structure from array owns and save in bufferOwn
             const elOwns = this.owns[key];
             if (!this.bufferOwn.has(elOwns.type)) {
                 this.bufferOwn.set(elOwns.type, new Map());
@@ -129,10 +129,8 @@ class Project extends Model {
         this.owns.push(Own);
         if (!this.bufferOwn.has(clsObj)) {
             this.bufferOwn.set(clsObj, new Map());
-            this.bufferOwn.get(clsObj).set(object.id, Own);
-        } else {
-            this.bufferOwn.get(clsObj).set(object.id, Own);
         }
+        this.bufferOwn.get(clsObj).set(object.id, Own);
         return this;
     }
 
