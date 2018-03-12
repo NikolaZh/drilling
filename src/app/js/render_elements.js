@@ -264,17 +264,9 @@ const renderAll = () => {
 };
 
 let storage = new StorageBuffer();
-storage.all(Driller);
-
-//const drillers = storage.buffer.get('Driller');
-
-console.log(storage);
-
-//if (!storage.all(Driller).length) {
-  //  storage.buffer.set('Driller', new Map());
-//}
-
-/*
+if (!storage.all(Driller).length) {
+    storage.buffer.set('Driller', new Map());
+}
 if (!storage.all(Equipment).length) {
     storage.buffer.set('Equipment', new Map());
 }
@@ -283,14 +275,14 @@ if (!storage.all(Operator).length) {
 }
 if (!storage.all(Project).length) {
     storage.buffer.set('Project', new Map());
-}*/
+}
 const scheduler = new Scheduler(storage);
-
-//const equipments = storage.buffer.get('Equipment');
-//const projects = storage.buffer.get('Project');
-//const operators = storage.buffer.get('Operator');
-//renderAll();
+const drillers = storage.buffer.get('Driller');
+const equipments = storage.buffer.get('Equipment');
+const projects = storage.buffer.get('Project');
+const operators = storage.buffer.get('Operator');
+renderAll();
 addKeyCreateForm(Driller);
-//addKeyCreateForm(Equipment);
-//addKeyCreateForm(Project);
-//addKeyCreateForm(Operator);
+addKeyCreateForm(Equipment);
+addKeyCreateForm(Project);
+addKeyCreateForm(Operator);

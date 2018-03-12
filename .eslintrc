@@ -1,7 +1,10 @@
 {
     "extends": "airbnb",
-   
+
     "rules": {
+        "react/jsx-filename-extension": ['off', { extensions: ['.jsx'] }],
+        "react/jsx-closing-tag-location": 'off',
+        "react/prefer-stateless-function": ['off', { ignorePureComponents: true }],
         "func-names": ["error", "never"],
         'no-unused-vars': ['off', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
         'no-underscore-dangle': ['off', {
@@ -10,8 +13,8 @@
             allowAfterSuper: false,
             enforceInMethodNames: false,
         }],
-'default-case': ['off', { commentPattern: '^no default$' }],
-'no-case-declarations': 'off',
+        'default-case': ['off', { commentPattern: '^no default$' }],
+        'no-case-declarations': 'off',
         'no-restricted-syntax': [
             'off',
             {
@@ -35,46 +38,46 @@
         'object-property-newline': ['off', {
             allowMultiplePropertiesPerLine: true,
         }],
-'guard-for-in': 'off',
-'no-param-reassign': ['off', {
-      props: true,
-      ignorePropertyModificationsFor: [
-        'acc', // for reduce accumulators
-        'e', // for e.returnvalue
-        'ctx', // for Koa routing
-        'req', // for Express requests
-        'request', // for Express requests
-        'res', // for Express responses
-        'response', // for Express responses
-        '$scope', // for Angular 1 scopes
-      ]
-    }],
-'class-methods-use-this': ['off', {
-      exceptMethods: [],
-    }],
-'no-plusplus': 'off',
-indent: ['error', 4, {
-      SwitchCase: 1,
-      VariableDeclarator: 1,
-      outerIIFEBody: 1,
-      // MemberExpression: null,
-      FunctionDeclaration: {
-        parameters: 1,
-        body: 1
-      },
-      FunctionExpression: {
-        parameters: 1,
-        body: 1
-      },
-      CallExpression: {
-        arguments: 1
-      },
-      ArrayExpression: 1,
-      ObjectExpression: 1,
-      ImportDeclaration: 1,
-      flatTernaryExpressions: false,
-      ignoredNodes: ['JSXElement', 'JSXElement *']
-    }]
+        'guard-for-in': 'off',
+        'no-param-reassign': ['off', {
+            props: true,
+            ignorePropertyModificationsFor: [
+                'acc', // for reduce accumulators
+                'e', // for e.returnvalue
+                'ctx', // for Koa routing
+                'req', // for Express requests
+                'request', // for Express requests
+                'res', // for Express responses
+                'response', // for Express responses
+                '$scope', // for Angular 1 scopes
+            ]
+        }],
+        'class-methods-use-this': ['off', {
+            exceptMethods: [],
+        }],
+        'no-plusplus': 'off',
+        indent: ['error', 4, {
+            SwitchCase: 1,
+            VariableDeclarator: 1,
+            outerIIFEBody: 1,
+            // MemberExpression: null,
+            FunctionDeclaration: {
+                parameters: 1,
+                body: 1
+            },
+            FunctionExpression: {
+                parameters: 1,
+                body: 1
+            },
+            CallExpression: {
+                arguments: 1
+            },
+            ArrayExpression: 1,
+            ObjectExpression: 1,
+            ImportDeclaration: 1,
+            flatTernaryExpressions: false,
+            ignoredNodes: ['JSXElement', 'JSXElement *']
+        }]
     },
 
 }
