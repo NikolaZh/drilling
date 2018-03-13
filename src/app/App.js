@@ -30,17 +30,15 @@ class App extends Component {
     }
 
     render() {
-        const EmpyObject = this.state.NewEmptyObject;
-
         return (
           <div><header > <Navbar /> </header>
             <div className="container-fluid">
               <div className="row">
-                <Sidebar changeData={this.changeData} />
+                <Sidebar changeData={this.changeData} objName={this.state.NewEmptyObject.constructor.name} />
                 <main role="main" className="col-sm-9 ml-sm-auto col-md-10 pt-3">
                   <section className="row card-section">
                     <div className="col-sm-4">
-                      <CardInput Obj={this.state.InputObject} NewEmptyObject={this.state.NewEmptyObject} EmpyObject={EmpyObject} />
+                      <CardInput Obj={this.state.InputObject} NewEmptyObject={this.state.NewEmptyObject} changeData={this.changeData} />
                     </div>
                     <div className="col-sm-4">
                       <Card />
