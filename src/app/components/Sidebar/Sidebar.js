@@ -26,16 +26,16 @@ class Sidebar extends Component {
 
             <ul className="nav nav-pills flex-column">
               <li className="nav-item">
-                <a className={this.navlink(objName, 'Driller')} href="#" onClick={() => data.changeData('Driller')}>Drillers</a>
+                <a className={this.navlink(objName, 'Driller')} href="#" onClick={() => data.changeData('Driller', true)}>Drillers</a>
               </li>
               <li className="nav-item">
-                <a className={this.navlink(objName, 'Equipment')} href="#" onClick={() => data.changeData('Equipment')}>Equipment</a>
+                <a className={this.navlink(objName, 'Equipment')} href="#" onClick={() => data.changeData('Equipment', true)}>Equipment</a>
               </li>
               <li className="nav-item">
-                <a className={this.navlink(objName, 'Operator')} href="#" onClick={() => data.changeData('Operator')}>Operators</a>
+                <a className={this.navlink(objName, 'Operator')} href="#" onClick={() => data.changeData('Operator', true)}>Operators</a>
               </li>
               <li className="nav-item">
-                <a className={this.navlink(objName, 'Project')} href="#" onClick={() => data.changeData('Project')}>Projects</a>
+                <a className={this.navlink(objName, 'Project')} href="#" onClick={() => data.changeData('Project', true)}>Projects</a>
               </li>
             </ul>
 

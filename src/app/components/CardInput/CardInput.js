@@ -8,17 +8,18 @@ class CardInput extends Component {
         this.props = props;
         this.state = {};
         this.state = this.stateFromProps(props.Obj.fields);
-        this.state.CardInputMount = true;
+        this.state.cardInputMount = true;
         this.handleChangeForm = this.handleChangeForm.bind(this);
         this.saveObject = this.saveObject.bind(this);
         this.changeMount = this.changeMount.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
-        for (const key of Object.keys(this.state)) { // maybe not necessary
+        for (const key of Object.keys(this.state)) {
             delete this.state[key];
         }
         const state = this.stateFromProps(nextProps.Obj.fields);
+        state.cardInputMount = nextProps.allDataChange;
         this.setState(state);
     }
 
@@ -27,13 +28,13 @@ class CardInput extends Component {
             obj[cur] = '';
             return obj;
         }, {});
-        state.CardInputMount = true;
+        // state.cardInputMount = true;
         return state;
     }
 
     changeMount() {
         this.setState({
-            CardInputMount: !this.state.CardInputMount,
+            cardInputMount: !this.state.cardInputMount,
         });
     }
 
@@ -50,13 +51,15 @@ class CardInput extends Component {
         const NewObject = this.props.NewEmptyObject;
 
         for (const key in this.state) {
-            if (key !== 'CardInputMount') {
+            if (key !== 'cardInputMount') {
                 NewObject.fields[key] = this.state[key];
             }
         }
 
         console.log(NewObject);
+
         storage.save(NewObject);
+        this.props.changeData(NewObject.constructor.name, false);
     }
 
     render() {
@@ -64,20 +67,17 @@ class CardInput extends Component {
         const NewObject = data.NewEmptyObject;
         let inputForm = (
           <div className="card">
-            <div className="card-header text-primary" >
-                Successful Saved!
-             </div>
-            <div className="card-body card-content-small" >
-            Your {NewObject.constructor.name} was added to database
+            <div className="card-body card-content-small text-primary" >
+              <h6 className="card-subtitle mb-2">Successful Saved!</h6>
+              <h6 className="card-subtitle mb-2 text-muted" > Your {NewObject.constructor.name} was added to database </h6>
             </div>
-
             <div className="card-body">
-              <a href="#" className="card-link text-info" onClick={() => data.changeData(NewObject.constructor.name)}><span className="oi oi-check" /> Add New</a>
+              <a href="#" className="card-link text-info" onClick={() => data.changeData(NewObject.constructor.name, true)}><span className="oi oi-check" /> Add New</a>
             </div>
           </div>
         );
 
-        if (this.state.CardInputMount) {
+        if (this.state.cardInputMount) {
             inputForm = (
               <div className="card">
                 <div className="card-body card-content-small">
