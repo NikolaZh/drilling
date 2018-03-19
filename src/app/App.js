@@ -35,9 +35,10 @@ class App extends Component {
     }
 
     render() {
-        console.log(this.state);
-        console.log(storage);
-        console.log(storage.all(this.state.InputObject));
+        // console.log(this.state);
+        // console.log(storage);
+        // console.log(storage.all(this.state.InputObject));
+        // console.log(storage.all(Project));
         return (
           <div><header > <Navbar /> </header>
             <div className="container-fluid">

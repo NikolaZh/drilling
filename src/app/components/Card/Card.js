@@ -16,15 +16,16 @@ class Card extends Component {
     }
 
     render() {
+        console.log(this.state.Obj.fields);
         return (
           <div className="card" >
             <div className="card-body card-content-small">
               {Object.keys(this.state.Obj.fields).map((el, i) => {
                 if (el === 'owns') return <h6 className="card-subtitle mb-2 text-muted" key={el}> заняты на проекте </h6>;
                 if (i === 0) {
-                   return <h5 className="card-title" key={el}>{this.state.Obj.fields[el]}</h5>;
+                   return <h5 className="card-title" key={el}>{this.state.Obj.fields[el].toString()}</h5>;
                 }
-                  return <h6 className="card-subtitle mb-2 text-muted" key={el}>{this.state.Obj.fields[el]}</h6>;
+                  return <h6 className="card-subtitle mb-2 text-muted" key={el}>{this.state.Obj.fields[el].toString()}</h6>;
               })}
               <p className="card-text">Used in &laquo;<a href="#">#Project</a>&raquo; (till 25.01.2018)</p>
             </div>

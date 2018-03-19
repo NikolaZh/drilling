@@ -28,7 +28,7 @@ class CardSection extends Component {
     render() {
         const data = this.props;
         const cardArray = [];
-        console.log(data.storageData);
+        // console.log(data.storageData);
 
         console.log(this.state.storageData);
 
