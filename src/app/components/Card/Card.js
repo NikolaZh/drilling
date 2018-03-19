@@ -16,7 +16,6 @@ class Card extends Component {
     }
 
     render() {
-        console.log(this.state.Obj.fields);
         return (
           <div className="card" >
             <div className="card-body card-content-small">

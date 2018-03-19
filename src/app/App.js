@@ -4,7 +4,6 @@ import Sidebar from './components/Sidebar/Sidebar';
 import Card from './components/Card/Card';
 import CardInput from './components/CardInput/CardInput';
 import CardSection from './components/CardSection/CardSection';
-import StorageBuffer from './js/lib/model/buffer';
 import { storage, Driller, Operator, Equipment, Project, Scheduler } from './js/js-library';
 
 class App extends Component {
@@ -14,7 +13,6 @@ class App extends Component {
             InputObject: Driller,
             NewEmptyObject: new Driller(),
         };
-        // this.state.Storage = storage.all(this.state.InputObject);
         this.changeData = this.changeData.bind(this);
     }
 
@@ -35,10 +33,6 @@ class App extends Component {
     }
 
     render() {
-        // console.log(this.state);
-        // console.log(storage);
-        // console.log(storage.all(this.state.InputObject));
-        // console.log(storage.all(Project));
         return (
           <div><header > <Navbar /> </header>
             <div className="container-fluid">

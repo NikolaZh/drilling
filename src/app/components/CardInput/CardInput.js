@@ -28,7 +28,6 @@ class CardInput extends Component {
             obj[cur] = '';
             return obj;
         }, {});
-        // state.cardInputMount = true;
         return state;
     }
 
@@ -55,8 +54,6 @@ class CardInput extends Component {
                 NewObject.fields[key] = this.state[key];
             }
         }
-
-        console.log(NewObject);
 
         storage.save(NewObject);
         this.props.changeData(NewObject.constructor.name, false);

@@ -25,13 +25,33 @@ class CardSection extends Component {
         });
     }
 
+    dataByThreeOnLine(array) {
+        const result = [];
+        let bufferArr = [];
+        let counter = 0;
+        let key = 1;
+        for (let i = 0; i < array.length; i++) {
+            bufferArr.push(array[i]);
+            counter++;
+            if (counter === 3) {
+                result.push(<section className="row card-section" key={`card-section${key}`}>
+                  {bufferArr}
+                </section>);
+                bufferArr = [];
+                counter = 0;
+                key++;
+            }
+        }
+        if (counter === 0) return result;
+        result.push(<section className="row card-section" key={`card-section${key}`}>
+          {bufferArr}
+        </section>);
+        return result;
+    }
+
     render() {
         const data = this.props;
         const cardArray = [];
-        // console.log(data.storageData);
-
-        console.log(this.state.storageData);
-
         cardArray[0] = (
           <div className="col-sm-4" key="card-input">
             <CardInput
@@ -50,7 +70,7 @@ class CardSection extends Component {
             counter++;
         }
 
-        const Cards = dataByThreeOnLine(cardArray);
+        const Cards = this.dataByThreeOnLine(cardArray);
         return (
           <main role="main" className="col-sm-9 ml-sm-auto col-md-10 pt-3" >
             {Cards}
@@ -62,27 +82,3 @@ class CardSection extends Component {
 
 
 export default CardSection;
-
-const dataByThreeOnLine = (array) => {
-    const result = [];
-    let bufferArr = [];
-    let counter = 0;
-    let key = 1;
-    for (let i = 0; i < array.length; i++) {
-        bufferArr.push(array[i]);
-        counter++;
-        if (counter === 3) {
-            result.push(<section className="row card-section" key={`card-section${key}`}>
-              {bufferArr}
-            </section>);
-            bufferArr = [];
-            counter = 0;
-            key++;
-        }
-    }
-    if (counter === 0) return result;
-    result.push(<section className="row card-section" key={`card-section${key}`}>
-      {bufferArr}
-    </section>);
-    return result;
-};
