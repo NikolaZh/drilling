@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Card from '../Card/Card';
+import CardProject from '../CardProject/CardProject';
 import CardInput from '../CardInput/CardInput';
 
 class CardSection extends Component {
@@ -63,11 +64,20 @@ class CardSection extends Component {
           </div>
         );
         let counter = 1;
-        for (const item of this.state.storageData) {
-            cardArray.push(<div className="col-sm-4" key={`card-div${counter}`}>
-              <Card Obj={item} />
-            </div>);
-            counter++;
+        if (this.state.NewEmptyObject.constructor.name !== 'Project') {
+            for (const item of this.state.storageData) {
+                cardArray.push(<div className="col-sm-4" key={`card-div${counter}`}>
+                  <Card Obj={item} />
+                </div>);
+                counter++;
+            }
+        } else {
+            for (const item of this.state.storageData) {
+                cardArray.push(<div className="col-sm-4" key={`card-div${counter}`}>
+                  <CardProject Obj={item} />
+                </div>);
+                counter++;
+            }
         }
 
         const Cards = this.dataByThreeOnLine(cardArray);

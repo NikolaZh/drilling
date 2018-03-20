@@ -4,19 +4,7 @@ class CardTitle extends Component {
     constructor(props) {
         super();
         this.props = props;
-        // this.handlePasswordChange = this.handlePasswordChange.bind(this);
     }
-
-    // handlePasswordChange(e) {
-    //     this.setState({
-    //         state: {
-    //             NewEmptyObj: {
-    //                 value: e.target.value,
-    //             },
-    //         },
-    //     });
-    // this.props.state = e.target.value;
-    // }
 
     render() {
         const data = this.props;
