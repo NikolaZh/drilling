@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import CardTitle from './CardTitle/CardTitle';
+import CardTitle from '../CardInput/CardTitle/CardTitle';
 import { storage } from '../../js/js-library';
 
-class CardInput extends Component {
+class CardEdit extends Component {
     constructor(props) {
         super();
         this.props = props;
-        this.state = {};
+        this.state = {
+
+        };
         this.state = this.stateFromProps(props.Obj.fields);
         this.state.cardInputMount = true;
         this.handleChangeForm = this.handleChangeForm.bind(this);
@@ -14,18 +16,16 @@ class CardInput extends Component {
         this.changeMount = this.changeMount.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        for (const key of Object.keys(this.state)) {
-            delete this.state[key];
-        }
-        const state = this.stateFromProps(nextProps.Obj.fields);
-        state.cardInputMount = nextProps.allDataChange;
-        this.setState(state);
-    }
-
     stateFromProps(props) {
+        Object.defineProperty(props, 'owns', {
+            enumerable: false,
+        });
         const state = Object.keys(props).reduce((obj, cur) => {
-            obj[cur] = '';
+            if ((cur === 'date1' || cur === 'date2') && (typeof props[cur] !== 'string')) {
+                obj[cur] = props[cur].toISOString().substr(0, 10);
+            } else {
+                obj[cur] = props[cur];
+            }
             return obj;
         }, {});
         return state;
@@ -47,54 +47,46 @@ class CardInput extends Component {
 
     saveObject() {
         this.changeMount();
-        const NewObject = this.props.NewEmptyObject;
-
+        const EditedObject = this.props.Obj;
         for (const key in this.state) {
             if (key !== 'cardInputMount') {
-                NewObject.fields[key] = this.state[key];
+                EditedObject.fields[key] = this.state[key];
             }
         }
-
-        storage.save(NewObject);
-        this.props.changeData(NewObject.constructor.name, false);
+        storage.save(EditedObject);
     }
 
     render() {
         const data = this.props;
-        const NewObject = data.NewEmptyObject;
-        let inputForm = (
+        let editForm = (
           <div className="card">
             <div className="card-body card-content-small text-primary" >
               <h6 className="card-subtitle mb-2">Successful Saved!</h6>
-              <h6 className="card-subtitle mb-2 text-muted" > Your {NewObject.constructor.name} was added to database </h6>
             </div>
             <div className="card-body">
-              <a href="#" className="card-link text-info" onClick={() => data.changeData(NewObject.constructor.name, true)}><span className="oi oi-check" /> Add New</a>
+              <a href="#" className="card-link text-info" onClick={() => data.changeData(data.Obj.constructor.name, true)}><span className="oi oi-check" /> OK</a>
             </div>
           </div>
         );
-
         if (this.state.cardInputMount) {
-            inputForm = (
+            editForm = (
               <div className="card">
                 <div className="card-body card-content-small">
                   {Object.keys(data.Obj.fields).map((el, i) => {
                 let subtitle = true;
                 let type = 'text';
-                let dateHeader = '';
+                const dateHeader = '';
                   if (i === 0) {
                       subtitle = false;
                   }
                   if (el === 'date1' || el === 'date2') {
                     type = 'date';
-                    dateHeader = <div key={`div_${el}_date`}><h6 key={`h6_${el}_date`} className="text-muted form-control-sm">{data.Obj.fields[el]}</h6></div>;
                   }
                       return (<div key={`${el}`}>{dateHeader}<CardTitle
                         className="card-title"
                         key={el}
                         type={type}
                         subtitle={subtitle}
-                        placeholder={data.Obj.fields[el]}
                         name={el}
                         value={this.state[el]}
                         onChange={this.handleChangeForm}
@@ -102,16 +94,14 @@ class CardInput extends Component {
               })}
                 </div>
                 <div className="card-body">
-                  <a href="#" className="card-link text-success" onClick={this.saveObject}><span className="oi oi-check" /> Add</a>
+                  <a href="#" className="card-link text-success" onClick={this.saveObject}><span className="oi oi-check" />Save Changes</a>
                 </div>
               </div>);
         }
-
         return (
-          <div>  { inputForm } </div>
+          <div >{editForm}</div>
         );
     }
 }
 
-
-export default CardInput;
+export default CardEdit;

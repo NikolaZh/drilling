@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Card from '../Card/Card';
 import CardProject from '../CardProject/CardProject';
 import CardInput from '../CardInput/CardInput';
+import CardEdit from '../CardEdit/CardEdit';
 
 class CardSection extends Component {
     constructor(props) {
@@ -67,14 +68,14 @@ class CardSection extends Component {
         if (this.state.NewEmptyObject.constructor.name !== 'Project') {
             for (const item of this.state.storageData) {
                 cardArray.push(<div className="col-sm-4" key={`card-div${counter}`}>
-                  <Card Obj={item} />
+                  <Card Obj={item} changeData={this.state.changeData} />
                 </div>);
                 counter++;
             }
         } else {
             for (const item of this.state.storageData) {
                 cardArray.push(<div className="col-sm-4" key={`card-div${counter}`}>
-                  <CardProject Obj={item} />
+                  <CardProject Obj={item} changeData={this.state.changeData} />
                 </div>);
                 counter++;
             }
@@ -85,7 +86,6 @@ class CardSection extends Component {
           <main role="main" className="col-sm-9 ml-sm-auto col-md-10 pt-3" >
             {Cards}
           </main>
-
         );
     }
 }

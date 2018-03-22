@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import CardEdit from '../CardEdit/CardEdit';
 
 class CardProject extends Component {
     constructor(props) {
@@ -7,11 +8,22 @@ class CardProject extends Component {
         this.state = {
             Obj: props.Obj,
         };
+        this.state.cardInputMount = true;
+        this.changeMount = this.changeMount.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({
             Obj: nextProps.Obj,
+        });
+        this.setState({
+            cardInputMount: true,
+        });
+    }
+
+    changeMount() {
+        this.setState({
+            cardInputMount: !this.state.cardInputMount,
         });
     }
 
@@ -21,14 +33,10 @@ class CardProject extends Component {
             year: 'numeric',
             month: 'numeric',
         };
-
-
         Object.defineProperty(this.state.Obj, 'owns', {
             enumerable: false,
         });
-
-
-        return (
+        let card = (
           <div className="card" >
             <div className="card-body card-content-small">
               {Object.keys(this.state.Obj.fields).map((el, i) => {
@@ -56,13 +64,21 @@ class CardProject extends Component {
                   </li>
                   ))}
               </ul>
-
             </div>
+
             <div className="card-body" key={this.props.key}>
-              <a href="#" className="card-link text-info" key={this.props.key}><span className="oi oi-pencil" key={this.props.key} /> Edit</a>
+              <a href="#" className="card-link text-info" key={this.props.key} onClick={this.changeMount}><span className="oi oi-pencil" key={this.props.key} /> Edit</a>
               <a href="#" className="card-link text-danger" key={this.props.key}><span className="oi oi-trash" key={this.props.key} /> Drop</a>
             </div>
           </div>
+        );
+        if (!this.state.cardInputMount) {
+            card = (
+              <CardEdit Obj={this.state.Obj} changeData={this.props.changeData} />
+            );
+        }
+        return (
+          <div> {card} </div>
         );
     }
 }
