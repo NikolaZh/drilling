@@ -4,7 +4,7 @@ import Sidebar from './components/Sidebar/Sidebar';
 import Card from './components/Card/Card';
 import CardInput from './components/CardInput/CardInput';
 import CardSection from './components/CardSection/CardSection';
-import { storage, Driller, Operator, Equipment, Project, Scheduler } from './js/js-library';
+import { storage, Driller, Operator, Equipment, Project, scheduler } from './js/js-library';
 
 class App extends Component {
     constructor(props) {

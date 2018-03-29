@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Card from '../Card/Card';
 import CardProject from '../CardProject/CardProject';
+import CardInputProject from '../CardInputProject/CardInputProject';
 import CardInput from '../CardInput/CardInput';
 import CardEdit from '../CardEdit/CardEdit';
 
@@ -54,28 +55,38 @@ class CardSection extends Component {
     render() {
         const data = this.props;
         const cardArray = [];
-        cardArray[0] = (
-          <div className="col-sm-4" key="card-input">
-            <CardInput
-              Obj={this.state.Obj}
-              NewEmptyObject={this.state.NewEmptyObject}
-              changeData={this.state.changeData}
-              allDataChange={this.state.allDataChange}
-            />
-          </div>
-        );
         let counter = 1;
-        if (this.state.NewEmptyObject.constructor.name !== 'Project') {
+        if (this.state.NewEmptyObject.constructor.name === 'Project') {
+            cardArray[0] = (
+              <div className="col-sm-4" key="card-input">
+                <CardInputProject
+                  Obj={this.state.Obj}
+                  NewEmptyObject={this.state.NewEmptyObject}
+                  changeData={this.state.changeData}
+                  allDataChange={this.state.allDataChange}
+                />
+              </div>
+            );
             for (const item of this.state.storageData) {
                 cardArray.push(<div className="col-sm-4" key={`card-div${counter}`}>
-                  <Card Obj={item} changeData={this.state.changeData} />
+                  <CardProject Obj={item} changeData={this.state.changeData} />
                 </div>);
                 counter++;
             }
         } else {
+            cardArray[0] = (
+              <div className="col-sm-4" key="card-input">
+                <CardInput
+                  Obj={this.state.Obj}
+                  NewEmptyObject={this.state.NewEmptyObject}
+                  changeData={this.state.changeData}
+                  allDataChange={this.state.allDataChange}
+                />
+              </div>
+            );
             for (const item of this.state.storageData) {
                 cardArray.push(<div className="col-sm-4" key={`card-div${counter}`}>
-                  <CardProject Obj={item} changeData={this.state.changeData} />
+                  <Card Obj={item} changeData={this.state.changeData} />
                 </div>);
                 counter++;
             }

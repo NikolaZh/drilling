@@ -25,19 +25,19 @@ class Driller extends Model {
 
 class Equipment extends Model {
     static get fields() {
-        return { type: 'Тип оборудования', code: 'Серийный номер' };
+        return { name: 'Тип оборудования', code: 'Серийный номер' };
     }
 
     static unwrap(fields) {
-        return new Equipment({ type: fields.type, code: fields.code }, fields.id);
+        return new Equipment({ name: fields.name, code: fields.code }, fields.id);
     }
 
     constructor(fields = {}, id = null) {
         super(fields, id);
     }
 
-    get type() {
-        return this.fields.type;
+    get name() {
+        return this.fields.name;
     }
 
     get code() {
@@ -143,11 +143,11 @@ class Project extends Model {
 
 class Operator extends Model {
     static get fields() {
-        return { fio: 'ФИО оператора', phone: 'Контактный номер' };
+        return { name: 'ФИО оператора', phone: 'Контактный номер' };
     }
 
     static unwrap(fields) {
-        return new Operator({ fio: fields.fio, phone: fields.phone }, fields.id);
+        return new Operator({ name: fields.name, phone: fields.phone }, fields.id);
     }
 
     constructor(fields = {}, id = null) {
@@ -155,7 +155,7 @@ class Operator extends Model {
     }
 
     get name() {
-        return this.fields.fio;
+        return this.fields.name;
     }
 
     get phone() {
@@ -175,7 +175,7 @@ class Scheduler {
             throw new RangeError('Дата начала должна быть меньше даты конца');
         }
         if (dayS > start || dayE < end) {
-            throw new RangeError('Указанные даты не входят диапазон Project');
+            throw new RangeError('Указанные даты не входят в диапазон Project');
         }
         if (!this.checkItemFreeOnDates(object, start, end)) {
             throw new RangeError(`${object.constructor.name} занят в эти дни`);
@@ -200,6 +200,17 @@ class Scheduler {
             }
         }
         return true;
+    }
+
+    getOwnsItems(project, ModelObject) {
+        const dataOwns = project.getBinded(new ModelObject());
+        const dataItems = [];
+        if (dataOwns) {
+            dataOwns.forEach((el) => {
+                dataItems.push(this.storage.load(ModelObject, el.id));
+            });
+        }
+        return dataItems;
     }
 }
 

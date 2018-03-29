@@ -80,14 +80,10 @@ class CardInput extends Component {
                 <div className="card-body card-content-small">
                   {Object.keys(data.Obj.fields).map((el, i) => {
                 let subtitle = true;
-                let type = 'text';
-                let dateHeader = '';
+                const type = 'text';
+                const dateHeader = '';
                   if (i === 0) {
                       subtitle = false;
-                  }
-                  if (el === 'date1' || el === 'date2') {
-                    type = 'date';
-                    dateHeader = <div key={`div_${el}_date`}><h6 key={`h6_${el}_date`} className="text-muted form-control-sm">{data.Obj.fields[el]}</h6></div>;
                   }
                       return (<div key={`${el}`}>{dateHeader}<CardTitle
                         className="card-title"
