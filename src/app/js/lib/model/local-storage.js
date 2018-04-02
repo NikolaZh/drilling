@@ -9,7 +9,12 @@ class LocalStorage extends BaseStorage {
             wrapObj = [];
             return wrapObj;
         } // check our object in storage browser
-        const unwrapObj = JSON.parse(wrapObj).map(fields => cls.unwrap(fields));
+        const unwrapObj = (JSON.parse(wrapObj).map((fields) => {
+            if (fields) {
+                return cls.unwrap(fields);
+            }
+            return null;
+        })).filter(el => el !== null);
         return unwrapObj;
     }
 
@@ -40,6 +45,29 @@ class LocalStorage extends BaseStorage {
         }
         localStorage.setItem(storageName, JSON.stringify(data));
         return object._id;
+    }
+
+    delete(object) {
+        super.delete(object);
+        let deleteSuccess;
+        const storageName = object.constructor.name;
+        let data = localStorage.getItem(storageName);
+        if (data) {
+            data = JSON.parse(data).map((fields) => {
+                if (fields) {
+                    object.constructor.unwrap(fields);
+                }
+            }).filter(el => el !== undefined);
+            for (const key in data) {
+                if (data[key]._id === object._id) {
+                    delete data[key];
+                    deleteSuccess = object._id;
+                    break;
+                }
+            }
+            localStorage.setItem(storageName, JSON.stringify(data));
+        }
+        return deleteSuccess;
     }
 
     load(cls, id) {

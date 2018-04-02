@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import CardTitle from '../CardInput/CardTitle/CardTitle';
-import { storage } from '../../js/js-library';
+import { storage, scheduler } from '../../js/js-library';
 
-class CardEdit extends Component {
+class CardEditProject extends Component {
     constructor(props) {
         super();
         this.props = props;
@@ -11,14 +11,24 @@ class CardEdit extends Component {
         };
         this.state = this.stateFromProps(props.Obj.fields);
         this.state.cardInputMount = true;
+        this.state.alldataOwns = props.alldataOwns;
+        this.dropedObjects = [];
         this.handleChangeForm = this.handleChangeForm.bind(this);
         this.saveObject = this.saveObject.bind(this);
         this.changeMount = this.changeMount.bind(this);
+        this.dropOwn = this.dropOwn.bind(this);
     }
 
     stateFromProps(props) {
+        Object.defineProperty(props, 'owns', {
+            enumerable: false,
+        });
         const state = Object.keys(props).reduce((obj, cur) => {
-            obj[cur] = props[cur];
+            if ((cur === 'date1' || cur === 'date2') && (typeof props[cur] !== 'string')) {
+                obj[cur] = props[cur].toISOString().substr(0, 10);
+            } else {
+                obj[cur] = props[cur];
+            }
             return obj;
         }, {});
         return state;
@@ -28,6 +38,7 @@ class CardEdit extends Component {
         this.setState({
             cardInputMount: !this.state.cardInputMount,
         });
+        console.log(this.state.Obj);
     }
 
     handleChangeForm(e) {
@@ -38,19 +49,38 @@ class CardEdit extends Component {
         });
     }
 
+    dropOwn(index) {
+        const alldataOwnsNew = this.state.alldataOwns;
+        this.dropedObjects.push(alldataOwnsNew[index]);
+        delete alldataOwnsNew[index];
+        this.setState({
+            alldataOwns: alldataOwnsNew,
+        });
+    }
+
     saveObject() {
-        this.changeMount();
         const EditedObject = this.props.Obj;
         for (const key in this.state) {
-            if (key !== 'cardInputMount') {
+            if (key !== 'cardInputMount' && key !== 'alldataOwns') {
                 EditedObject.fields[key] = this.state[key];
             }
         }
         storage.save(EditedObject);
+        for (const item of this.dropedObjects) {
+            scheduler.setObjToFree(EditedObject, item);
+        }
+        this.changeMount();
     }
 
     render() {
         const data = this.props;
+        const ownsList = [];
+        this.state.alldataOwns.forEach((item, index) => {
+            ownsList.push(<div key={`href${item.id}`}>
+              <a href="#" >&laquo;{item.fields.name}&raquo; </a>
+              <a href="#" className="card-link text-danger"><span className="oi oi-trash" onClick={() => this.dropOwn(index)} /></a>
+            </div>);
+        });
         let editForm = (
           <div className="card">
             <div className="card-body card-content-small text-primary" >
@@ -67,10 +97,13 @@ class CardEdit extends Component {
                 <div className="card-body card-content-small">
                   {Object.keys(data.Obj.fields).map((el, i) => {
                 let subtitle = true;
-                const type = 'text';
+                let type = 'text';
                 const dateHeader = '';
                   if (i === 0) {
                       subtitle = false;
+                  }
+                  if (el === 'date1' || el === 'date2') {
+                    type = 'date';
                   }
                       return (<div key={`${el}`}>{dateHeader}<CardTitle
                         className="card-title"
@@ -82,6 +115,7 @@ class CardEdit extends Component {
                         onChange={this.handleChangeForm}
                       /></div>);
               })}
+                  {ownsList}
                 </div>
                 <div className="card-body">
                   <a href="#" className="card-link text-success" onClick={this.saveObject}><span className="oi oi-check" /> Save Changes</a>
@@ -94,4 +128,4 @@ class CardEdit extends Component {
     }
 }
 
-export default CardEdit;
+export default CardEditProject;

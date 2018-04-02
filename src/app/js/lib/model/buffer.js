@@ -34,7 +34,16 @@ class StorageBuffer extends LocalStorage {
         return this.buffer.get(clsName).get(+id) || null;
     }
 
+    delete(object) {
+        super.delete(object);
+        const className = object.constructor.name;
+        if (this.buffer.has(className)) {
+            this.buffer.get(className).delete(object._id);
+        }
+    }
+
     _saveToBuffer(object) {
+        if (!object) return null; // protection of holes after delete objects
         const className = object.constructor.name;
         if (!this.buffer.has(className)) {
             this.buffer.set(className, new Map());

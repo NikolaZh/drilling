@@ -24,6 +24,10 @@ class BaseStorage {
     load(cls, id) {
         checkIsSubclass(cls, Model);
     }
+
+    delete(object) {
+        checkType(object, Model);
+    }
 }
 
 export default BaseStorage;

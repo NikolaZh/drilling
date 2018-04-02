@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import CardEdit from '../CardEdit/CardEdit';
+import CardEditProject from '../CardEditProject/CardEditProject';
 import OwnSection from '../OwnSection/OwnSection';
 import { storage, Driller, Operator, Equipment, Project, scheduler } from '../../js/js-library';
 
@@ -12,6 +12,7 @@ class CardProject extends Component {
         };
         this.state.cardInputMount = true;
         this.changeMount = this.changeMount.bind(this);
+        this.dropCard = this.dropCard.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -27,6 +28,11 @@ class CardProject extends Component {
         this.setState({
             cardInputMount: !this.state.cardInputMount,
         });
+    }
+
+    dropCard() {
+        scheduler.deleteObject(this.state.Obj);
+        this.props.changeData(this.state.Obj.constructor.name, true);
     }
 
     render() {
@@ -64,14 +70,23 @@ class CardProject extends Component {
               </table>
             </div>
             <div className="card-body">
-              <a href="#" className="card-link text-danger"><span className="oi oi-trash" /> Drop</a>
               <a href="#" className="card-link text-info" onClick={this.changeMount}><span className="oi oi-pencil" /> Edit</a>
+              <a href="#" className="card-link text-danger" onClick={this.dropCard}><span className="oi oi-trash" /> Drop</a>
             </div>
           </div>
         );
         if (!this.state.cardInputMount) {
             card = (
-              <CardEdit Obj={project} changeData={this.props.changeData} />
+              <CardEditProject
+                Obj={project}
+                changeData={this.props.changeData}
+                alldataOwns={ownsDriller.concat(ownsEquipment, ownsOperator)}
+                ownsEquipment={ownsEquipment}
+                ownsOperator={ownsOperator}
+                alldataDriller={Array.from(storage.all(Driller))}
+                alldataEquipment={Array.from(storage.all(Equipment))}
+                alldataOperator={Array.from(storage.all(Operator))}
+              />
             );
         }
         return (

@@ -136,6 +136,20 @@ class Project extends Model {
         return this;
     }
 
+    unBind(clsName, id) {
+        if (this.bufferOwn.has(clsName)) {
+            this.bufferOwn.get(clsName).delete(id);
+        }
+        const newOwns = []; // delete in array-owns note of unBind object
+        this._f.owns.forEach((item, index) => {
+            if (item.type !== clsName && item.id !== id) {
+                newOwns.push(item);
+            }
+        });
+        this._f.owns = newOwns;
+        return this;
+    }
+
     getBinded(object) {
         return this.bufferOwn.get(object.constructor.name);
     }
@@ -184,10 +198,30 @@ class Scheduler {
         this.storage.save(project);
     }
 
+    setObjToFree(project, object) {
+        project.unBind(object.constructor.name, object.id);
+        this.storage.save(project);
+    }
+
+    deleteObject(object) {
+        const clsName = object.constructor.name;
+        if (clsName === 'Project') {
+            this.storage.delete(object);
+        } else {
+            const projectsWhereObjectOwn = this.getProjectsWhereItemOwn(object); // before delete object, we set it free
+            if (projectsWhereObjectOwn) {
+                for (const item of Array.from(projectsWhereObjectOwn)) {
+                    this.setObjToFree(item, object);
+                }
+            }
+            this.storage.delete(object);
+        }
+    }
+
     checkItemFreeOnDates(object, start, end) {
         const dataProjects = this.storage.all(Project);
-        for (const value of dataProjects) {
-            const bindedOwns = value.getBinded(object);
+        for (const item of dataProjects) {
+            const bindedOwns = item.getBinded(object);
             if (bindedOwns && bindedOwns.has(object.id)) { // getBinded can return undefined, we check it
                 const dayS = new Date(bindedOwns.get(object.id).dateStart);
                 const dayE = new Date(bindedOwns.get(object.id).dateEnd);
@@ -211,6 +245,28 @@ class Scheduler {
             });
         }
         return dataItems;
+    }
+
+    getProjectsWhereItemOwn(object) {
+        const objectId = object.id;
+        const data = [];
+        const dataProjects = Array.from(this.storage.all(Project));
+        for (const item of dataProjects) {
+            if (item) { // check possible hole after delete object
+                const binded = item.getBinded(object);
+                if (binded) {
+                    binded.forEach((el) => {
+                        if (el.id === objectId) {
+                            data.push(item);
+                        }
+                    });
+                }
+            }
+        }
+        if (data.length !== 0) {
+            return data;
+        }
+        return undefined;
     }
 }
 

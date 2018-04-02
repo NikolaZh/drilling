@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import CardEdit from '../CardEdit/CardEdit';
+import { scheduler } from '../../js/js-library';
 
 class Card extends Component {
     constructor(props) {
@@ -10,6 +11,7 @@ class Card extends Component {
         };
         this.state.cardInputMount = true;
         this.changeMount = this.changeMount.bind(this);
+        this.dropCard = this.dropCard.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -27,7 +29,33 @@ class Card extends Component {
         });
     }
 
+    dropCard() {
+        scheduler.deleteObject(this.state.Obj);
+        this.props.changeData(this.state.Obj.constructor.name, true);
+    }
+
     render() {
+        const options = {
+            day: 'numeric',
+            year: 'numeric',
+            month: 'numeric',
+        };
+        let usedInProjects = (
+          <p className="card-text">No used in Projects</p>
+        );
+        const objectOwnAtProjects = scheduler.getProjectsWhereItemOwn(this.state.Obj);
+        if (objectOwnAtProjects) {
+            usedInProjects = [];
+            for (const item of objectOwnAtProjects) {
+                item.getBinded(this.state.Obj).forEach((el) => {
+                    if (el.id === this.state.Obj.id) {
+                        const projName = `Project ${item.fields.name}`;
+                        const dateEnd = (new Date(el.dateEnd)).toLocaleString('ru', options);
+                        usedInProjects.push(<p className="card-text" key={el.id}>Used in &laquo;<a href="#">{projName}</a>&raquo; (till {dateEnd})</p>);
+                    }
+                });
+            }
+        }
         let card = (
           <div className="card" >
             <div className="card-body card-content-small">
@@ -37,11 +65,11 @@ class Card extends Component {
                 }
                   return <h6 className="card-subtitle mb-2 text-muted" key={el}>{this.state.Obj.fields[el]}</h6>;
               })}
-              <p className="card-text">Used in &laquo;<a href="#">#Project</a>&raquo; (till 25.01.2018)</p>
+              {usedInProjects}
             </div>
             <div className="card-body" >
               <a href="#" className="card-link text-info" onClick={this.changeMount}><span className="oi oi-pencil" /> Edit</a>
-              <a href="#" className="card-link text-danger" ><span className="oi oi-trash" /> Drop</a>
+              <a href="#" className="card-link text-danger" onClick={this.dropCard}><span className="oi oi-trash" /> Drop</a>
             </div>
           </div>
         );

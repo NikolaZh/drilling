@@ -52,13 +52,14 @@ class OwnSection extends Component {
 
     render() {
         const data = this.props;
-
         const listOfOwns = [];
+        console.log(data.owns);
         for (const item of data.owns) {
-            listOfOwns.push(<a href="#" key={`href${item.id}`}>&laquo;{item.fields.name}&raquo;</a>);
-            listOfOwns.push(', ');
+            if (item) {
+                listOfOwns.push(<a href="#" key={`href${item.id}`}>&laquo;{item.fields.name}&raquo;</a>, ', ');
+            }
         }
-        delete listOfOwns[listOfOwns.length - 1];
+        listOfOwns.pop();
 
         const ownDataToSelect = [];
         this.ownData.forEach((element, index) => { // pick up data of possible own objects and fill in select form
@@ -70,48 +71,26 @@ class OwnSection extends Component {
           <a href="#" className="text-info"><span className="oi oi-plus" onClick={this.changeMount} /></a>
         );
         if (!this.state.ownSectionMount) {
-            ownForm = [
-              <td key="a">
-                <form className="form-inline">
-                  <select className="custom-select my-1 mr-sm-2" id="ownObj" defaultValue="Choose" onChange={this.handleSelectForm}>
-                    <option defaultValue>Choose...</option>
-                    {ownDataToSelect}
-                  </select>
-                  <input type="date" id="dateStart" className="form-control" onChange={this.handleSelectForm} />
-                  <input type="date" id="dateEnd" className="form-control" onChange={this.handleSelectForm} />
-                </form>
-              </td>,
-              <td key="b" />,
-              <td key="c" />,
-            ];
-            ownSaveKey = [
-              <td key="a"><a href="#" className="card-link text-success" onClick={this.saveOwnObject}><span className="oi oi-check" />Save</a></td>,
-              <td key="b" />,
-              <td key="c" />,
-            ];
-            ownPlusButton = (
-              <a href="#" className="text-info"><span className="oi oi-minus" onClick={this.changeMount} /></a>
+            ownForm = (
+              <form className="form-inline">
+                <select className="custom-select my-1 mr-sm-2" id="ownObj" defaultValue="Choose" onChange={this.handleSelectForm}>
+                  <option defaultValue>Choose...</option>
+                  {ownDataToSelect}
+                </select>
+                <input type="date" id="dateStart" className="form-control" onChange={this.handleSelectForm} />
+                <input type="date" id="dateEnd" className="form-control" onChange={this.handleSelectForm} />
+                <a href="#" className="card-link text-success mb-2" onClick={this.saveOwnObject}><span className="oi oi-check" />Save</a>
+              </form>
             );
+            ownSaveKey = <a href="#" className="card-link text-success" onClick={this.saveOwnObject}><span className="oi oi-check" />Save</a>;
+            ownPlusButton = <a href="#" className="text-info"><span className="oi oi-minus" onClick={this.changeMount} /></a>;
         }
 
         return [
           <tr key="a">
-            <th>{data.name}</th>
+            <th>{data.name} {ownForm} {this.state.error}</th>
             <td>{listOfOwns}</td>
-            <td>{ownPlusButton}</td>
-          </tr>,
-          <tr key="b">
-            {ownForm}
-          </tr>,
-          <tr key="c">
-            <th>
-              {this.state.error}
-            </th>
-            <td />
-            <td />
-          </tr>,
-          <tr key="d" >
-            {ownSaveKey}
+            <td>{ownPlusButton} </td>
           </tr>,
         ];
     }
