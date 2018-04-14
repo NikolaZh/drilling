@@ -38,7 +38,6 @@ class CardEditProject extends Component {
         this.setState({
             cardInputMount: !this.state.cardInputMount,
         });
-        console.log(this.state.Obj);
     }
 
     handleChangeForm(e) {
@@ -66,8 +65,8 @@ class CardEditProject extends Component {
             }
         }
         storage.save(EditedObject);
-        for (const item of this.dropedObjects) {
-            scheduler.setObjToFree(EditedObject, item);
+        for (const element of this.dropedObjects) {
+            scheduler.setObjToFree(EditedObject, element.item);
         }
         this.changeMount();
     }
@@ -75,9 +74,9 @@ class CardEditProject extends Component {
     render() {
         const data = this.props;
         const ownsList = [];
-        this.state.alldataOwns.forEach((item, index) => {
-            ownsList.push(<div key={`href${item.id}`}>
-              <a href="#" >&laquo;{item.fields.name}&raquo; </a>
+        this.state.alldataOwns.forEach((el, index) => {
+            ownsList.push(<div key={`href${el.item.id}`}>
+              <a href="#" >&laquo;{el.item.fields.name}&raquo; </a>
               <a href="#" className="card-link text-danger"><span className="oi oi-trash" onClick={() => this.dropOwn(index)} /></a>
             </div>);
         });

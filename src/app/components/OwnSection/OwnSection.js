@@ -53,10 +53,9 @@ class OwnSection extends Component {
     render() {
         const data = this.props;
         const listOfOwns = [];
-        console.log(data.owns);
-        for (const item of data.owns) {
-            if (item) {
-                listOfOwns.push(<a href="#" key={`href${item.id}`}>&laquo;{item.fields.name}&raquo;</a>, ', ');
+        for (const element of data.owns) {
+            if (element) {
+                listOfOwns.push(<a href="#" key={`href${element.item.id}`}>&laquo;{element.item.fields.name}&raquo;</a>, ', ');
             }
         }
         listOfOwns.pop();
@@ -66,7 +65,7 @@ class OwnSection extends Component {
             ownDataToSelect.push(<option key={`option${element.id}`} value={index}>{element.fields.name}</option>);
         });
         let ownForm = [];
-        let ownSaveKey = [];
+        const ownSaveKey = [];
         let ownPlusButton = (
           <a href="#" className="text-info"><span className="oi oi-plus" onClick={this.changeMount} /></a>
         );
@@ -79,10 +78,9 @@ class OwnSection extends Component {
                 </select>
                 <input type="date" id="dateStart" className="form-control" onChange={this.handleSelectForm} />
                 <input type="date" id="dateEnd" className="form-control" onChange={this.handleSelectForm} />
-                <a href="#" className="card-link text-success mb-2" onClick={this.saveOwnObject}><span className="oi oi-check" />Save</a>
+                <a href="#" className="card-link text-success mb-2 own-save-button" onClick={this.saveOwnObject}><span className="oi oi-check" />Save</a>
               </form>
             );
-            ownSaveKey = <a href="#" className="card-link text-success" onClick={this.saveOwnObject}><span className="oi oi-check" />Save</a>;
             ownPlusButton = <a href="#" className="text-info"><span className="oi oi-minus" onClick={this.changeMount} /></a>;
         }
 

@@ -142,7 +142,9 @@ class Project extends Model {
         }
         const newOwns = []; // delete in array-owns note of unBind object
         this._f.owns.forEach((item, index) => {
-            if (item.type !== clsName && item.id !== id) {
+            if (item.type === clsName && item.id === id) {
+                delete this._f.owns[index];
+            } else {
                 newOwns.push(item);
             }
         });
@@ -241,10 +243,23 @@ class Scheduler {
         const dataItems = [];
         if (dataOwns) {
             dataOwns.forEach((el) => {
-                dataItems.push(this.storage.load(ModelObject, el.id));
+                const itemWithDates = {};
+                itemWithDates.item = this.storage.load(ModelObject, el.id);
+                itemWithDates.dateStart = el.dateStart;
+                itemWithDates.dateEnd = el.dateEnd;
+                dataItems.push(itemWithDates);
             });
         }
         return dataItems;
+    }
+
+    getAllOwns(project) {
+        const models = [Driller, Operator, Equipment];
+        let ownsData = [];
+        models.forEach((el) => {
+            ownsData = [...ownsData, ...this.getOwnsItems(project, el)];
+        });
+        return ownsData;
     }
 
     getProjectsWhereItemOwn(object) {
