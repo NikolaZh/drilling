@@ -10,10 +10,8 @@ class CardEdit extends Component {
 
         };
         this.state = this.stateFromProps(props.Obj.fields);
-        this.state.cardInputMount = true;
         this.handleChangeForm = this.handleChangeForm.bind(this);
         this.saveObject = this.saveObject.bind(this);
-        this.changeMount = this.changeMount.bind(this);
     }
 
     stateFromProps(props) {
@@ -22,12 +20,6 @@ class CardEdit extends Component {
             return obj;
         }, {});
         return state;
-    }
-
-    changeMount() {
-        this.setState({
-            cardInputMount: !this.state.cardInputMount,
-        });
     }
 
     handleChangeForm(e) {
@@ -39,33 +31,20 @@ class CardEdit extends Component {
     }
 
     saveObject() {
-        this.changeMount();
         const EditedObject = this.props.Obj;
         for (const key in this.state) {
-            if (key !== 'cardInputMount') {
-                EditedObject.fields[key] = this.state[key];
-            }
+            EditedObject.fields[key] = this.state[key];
         }
         storage.save(EditedObject);
+        this.props.changeData(this.props.Obj.constructor.name, true);
     }
 
     render() {
         const data = this.props;
-        let editForm = (
+        return (
           <div className="card">
-            <div className="card-body card-content-small text-primary" >
-              <h6 className="card-subtitle mb-2">Successful Saved!</h6>
-            </div>
-            <div className="card-body">
-              <a href="#" className="card-link text-info" onClick={() => data.changeData(data.Obj.constructor.name, true)}><span className="oi oi-check" /> OK</a>
-            </div>
-          </div>
-        );
-        if (this.state.cardInputMount) {
-            editForm = (
-              <div className="card">
-                <div className="card-body card-content-small">
-                  {Object.keys(data.Obj.fields).map((el, i) => {
+            <div className="card-body card-content-small">
+              {Object.keys(data.Obj.fields).map((el, i) => {
                 let subtitle = true;
                 const type = 'text';
                 const dateHeader = '';
@@ -82,14 +61,11 @@ class CardEdit extends Component {
                         onChange={this.handleChangeForm}
                       /></div>);
               })}
-                </div>
-                <div className="card-body">
-                  <a href="#" className="card-link text-success" onClick={this.saveObject}><span className="oi oi-check" /> Save Changes</a>
-                </div>
-              </div>);
-        }
-        return (
-          <div >{editForm}</div>
+            </div>
+            <div className="card-body">
+              <a href="#" className="card-link text-success" onClick={this.saveObject}><span className="oi oi-check" /> Save Changes</a>
+            </div>
+          </div>
         );
     }
 }

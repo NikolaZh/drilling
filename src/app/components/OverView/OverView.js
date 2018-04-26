@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Project, storage, scheduler } from '../../js/js-library';
-import CircleVeiw from './CircleView/CircleView';
+import CircleView from './CircleView/CircleView';
 import GantDiagram from './GantDiagram/GantDiagram';
 
 class OverView extends Component {
@@ -13,14 +13,14 @@ class OverView extends Component {
         let gantDiagram;
         const circleSection = [];
         if (allProjects.length === 0) {
-            circleSection.push(<div className="col">No Projects yet!</div>);
+            circleSection.push(<div className="col" key="no-project">No Projects yet!</div>);
         } else {
             gantDiagram = <GantDiagram project={allProjects[0]} ownData={scheduler.getAllOwns(allProjects[0])} />;
             allProjects.forEach((item, index) => {
                 if (index % 2 === 0) {
-                    circleSection.push(<CircleVeiw label={item.fields.name} key={item.fields.name} color="green" date1={item.fields.date1} date2={item.fields.date2} />);
+                    circleSection.push(<CircleView label={item.fields.name} key={`${item.fields.name + index}`} color="green" date1={item.fields.date1} date2={item.fields.date2} />);
                 } else {
-                    circleSection.push(<CircleVeiw label={item.fields.name} key={item.fields.name} date1={item.fields.date1} date2={item.fields.date2} />);
+                    circleSection.push(<CircleView label={item.fields.name} key={`${item.fields.name + index}`} date1={item.fields.date1} date2={item.fields.date2} />);
                 }
             });
         }

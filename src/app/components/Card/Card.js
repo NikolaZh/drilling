@@ -47,11 +47,13 @@ class Card extends Component {
         if (objectOwnAtProjects) {
             usedInProjects = [];
             for (const item of objectOwnAtProjects) {
+                let counter = 0;
                 item.getBinded(this.state.Obj).forEach((el) => {
                     if (el.id === this.state.Obj.id) {
                         const projName = `Project ${item.fields.name}`;
                         const dateEnd = (new Date(el.dateEnd)).toLocaleString('ru', options);
-                        usedInProjects.push(<p className="card-text" key={el.id}>Used in &laquo;<a href="#">{projName}</a>&raquo; (till {dateEnd})</p>);
+                        usedInProjects.push(<p className="card-text" key={item.fields.name + counter}>Used in &laquo;<a href="#">{projName}</a>&raquo; (till {dateEnd})</p>);
+                        counter++;
                     }
                 });
             }
