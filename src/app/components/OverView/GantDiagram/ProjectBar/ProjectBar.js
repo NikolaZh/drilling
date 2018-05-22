@@ -1,22 +1,13 @@
 import React, { Component } from 'react';
 
-class ProjectBar extends Component {
-    constructor(props) {
-        super();
-    }
+const projectBar = props => (
+  <div className="project-bar">
+    <div className="row">
+      <div className="col text-left">{props.dateStart}</div>
+      <div className="col ">{props.name}</div>
+      <div className="col text-right">{props.dateEnd}</div>
+    </div>
+  </div>
+);
 
-    render() {
-        const data = this.props;
-        return (
-          <div className="project-bar">
-            <div className="row">
-              <div className="col text-left">{data.dateStart}</div>
-              <div className="col ">{data.name}</div>
-              <div className="col text-right">{data.dateEnd}</div>
-            </div>
-          </div>
-        );
-    }
-}
-
-export default ProjectBar;
+export default projectBar;

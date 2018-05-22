@@ -1,20 +1,24 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class LineBar extends Component {
-    constructor(props) {
-        super();
-    }
+const lineBar = (props) => {
+    const lineBarMarginTop = props.height;
+    const barDateMarginTop = lineBarMarginTop + 17.5;
+    const barDateMarginLeft = props.marginLeft;
+    return [
+      <div
+        className="line-bar"
+        key="line-today"
+        style={{ height: `${props.height}px`, marginLeft: `${props.marginLeft}%`, marginTop: `-${lineBarMarginTop}px` }}
+      />,
+      <div
+        className="line-bar-date"
+        key="line-today-date"
+        style={{ marginTop: `-${barDateMarginTop}px`, marginLeft: `${barDateMarginLeft}%` }}
+      >
+             Today: {props.dateNow}
+      </div>,
+    ];
+};
 
-    render() {
-        const data = this.props;
-        const lineBarMarginTop = data.height;
-        const barDateMarginTop = lineBarMarginTop + 17.5;
-        const barDateMarginLeft = data.marginLeft;
-        return [
-          <div className="line-bar" key="line-today" style={{ height: `${data.height}px`, marginLeft: `${data.marginLeft}%`, marginTop: `-${lineBarMarginTop}px` }} />,
-          <div className="line-bar-date" key="line-today-date" style={{ marginTop: `-${barDateMarginTop}px`, marginLeft: `${barDateMarginLeft}%` }}> Today: {data.dateNow} </div>,
-        ];
-    }
-}
 
-export default LineBar;
+export default lineBar;

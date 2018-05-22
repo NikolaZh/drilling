@@ -1,18 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class OwnBar extends Component {
-    constructor(props) {
-        super();
-    }
+const ownBar = props => (
+  <div
+    className="own-bar"
+    style={{ marginLeft: `${props.marginLeft}%`, width: `${props.width}%` }}
+  >
+    {props.name}
+  </div>
+);
 
-    render() {
-        const data = this.props;
-        return (
-          <div className="own-bar" style={{ marginLeft: `${data.marginLeft}%`, width: `${data.width}%` }}>
-            {data.name}
-          </div>
-        );
-    }
-}
-
-export default OwnBar;
+export default ownBar;
